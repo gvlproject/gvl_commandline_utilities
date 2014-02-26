@@ -18,6 +18,11 @@ This script will:
 * Install the Table of Contents plugin
 """
 
+##
+# Clare Sloggett, VLSCI, University of Melbourne
+# Authored as part of the Genomics Virtual Laboratory project
+##
+
 # TODO: at end, tell user how to use
 # TODO: add Table of Contents plugin
 # TODO: set up readonly as well as interactive server

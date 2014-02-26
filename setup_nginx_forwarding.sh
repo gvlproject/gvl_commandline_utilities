@@ -7,7 +7,10 @@
 
 # TODO: set up readonly as well as interactive port forwarding
 
-#######
+##
+# Clare Sloggett, VLSCI, University of Melbourne
+# Authored as part of the Genomics Virtual Laboratory project
+##
 
 # Exit if any command fails
 set -e

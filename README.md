@@ -21,6 +21,7 @@ If a Toolshed-installed tool is uninstalled from Galaxy, running this script sho
 clean up the module file.
 
 For usage run
+
     python toolshed_to_modules.py -h
     
 Requires superuser permissions.
@@ -31,8 +32,8 @@ setup_ipython_server.py and setup_nginx_forwarding.sh
 Configure an ipython profile to run the ipython notebook server, and configure SSL
 encryption and port forwarding in NGINX to access this server.
 
-These scripts will not create correctly-working port forwarding on GVL images as they 
-require NGINX >= 1.3.13 .
+These scripts will not create correctly-working port forwarding on current GVL images as 
+they require NGINX >= 1.3.13 .
 
 setup_nginx_forwarding.sh requires superuser permissions.
 

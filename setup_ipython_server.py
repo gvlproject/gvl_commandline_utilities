@@ -60,9 +60,9 @@ c.NotebookApp.port = {port}
 c.NotebookApp.port_retries = 0
 
 # Assume that we will run at a subdirectory when port-forwarded
-c.NotebookApp.base_project_url = {location}/
-c.NotebookApp.base_kernel_url = {location}/
-c.NotebookApp.webapp_settings = {'static_url_prefix':'{location}/static/'}
+c.NotebookApp.base_project_url = '{location}/'
+c.NotebookApp.base_kernel_url = '{location}/'
+c.NotebookApp.webapp_settings = {{'static_url_prefix':'{location}/static/'}}
 
 # Note that we do not set c.NotebookApp.ip, so by default the servers will only
 # listen on localhost. We are relying on NGINX port forwarding.

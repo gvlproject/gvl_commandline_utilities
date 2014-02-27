@@ -17,7 +17,11 @@ import re
 import os
 import argparse
 import sys
+import logging
 from collections import defaultdict
+
+# Initialise logging to print info to screen
+logging.basicConfig(level=logging.INFO)
 
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--tools_dir', default='/mnt/galaxy/tools', help='directory in which Galaxy Toolshed tools are installed')
@@ -64,7 +68,7 @@ if len(delete_list) > 0:
         print "Ok? [y/N]"
         if raw_input().lower() != 'y':
             sys.exit()
-        print "Deleting old module files"
+        logging.info("Deleting old module files")
         for file in delete_list:
             os.remove(file)
 
@@ -81,8 +85,7 @@ for ((tool_name, tool_version), dirs) in tool_shells.iteritems():
     module_lines = []
     for dir in dirs:
         env_path = os.path.join(dir, 'env.sh')
-        #print
-        #print env_path
+        logging.debug("Parsing "+env_path)
         with open(env_path) as f:
             for row in f:
                 # Look for any environment variable setting, ie ^PATH= ...
@@ -94,7 +97,7 @@ for ((tool_name, tool_version), dirs) in tool_shells.iteritems():
                     parts = [x.strip() for x in envmatch.group(2).split(':')]
                     # Drop any empty strings 
                     parts = [x for x in parts if x != '']
-                    #print variable, parts
+                    logging.debug("Parsed variable: "+str(variable)+", list "+str(parts))
                     # We have to translate to modulefiles.
                     # Handle four cases:
                     # - the variable does not appear in the list; use setenv
@@ -112,11 +115,11 @@ for ((tool_name, tool_version), dirs) in tool_shells.iteritems():
                         module_lines.append("prepend-path  {0}  {1}\n".format(variable,
                                                                     ':'.join(parts[:-1])))  
                     else:
-                        print "Warning: line for environment variable {0} could not be "\
-                                "parsed in {1}".format(variable, env_path)                                          
+                        logging.warn("Line for environment variable {0} could not be "\
+                                "parsed in {1}".format(variable, env_path))                                        
                 else:
                     # No regex match at all
-                    print "Warning: some lines could not be parsed in "+env_path
+                    logging.warn("Some lines could not be parsed in "+env_path)
     module_contents = "#%Module\n"
     module_contents += "# Built automatically from Galaxy env.sh tool setup files\n\n"
     module_contents += "".join(module_lines)
@@ -129,7 +132,7 @@ for ((tool_name, tool_version), dirs) in tool_shells.iteritems():
 
     module_full_path = os.path.join(module_tool_path, tool_version)
 
-    print "Writing module to",module_full_path
+    logging.info("Writing module to " + module_full_path)
 
     f = open(module_full_path, 'wb')
     f.write(module_contents)

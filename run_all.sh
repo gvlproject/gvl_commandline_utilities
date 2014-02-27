@@ -20,7 +20,8 @@ sudo pip install jinja2
 
 # Configure ipython notebook port forwarding and encryption
 # This would be better bundled into the build config
-sudo sh setup_nginx_forwarding.sh
+# Until NGINX upgrade, SKIP this as we are using port access directly!
+#sudo sh setup_nginx_forwarding.sh
 
 # Configure ipython notebook server
 python setup_ipython_server.py

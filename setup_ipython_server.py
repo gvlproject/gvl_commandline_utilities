@@ -54,23 +54,16 @@ c.NotebookApp.open_browser = False
 # Require password access. 
 c.NotebookApp.password = u'{hash}'
 
-# Use a known port, which should match that in nginx port forwarding.
-# Do not try any other ports.
+# Use a known port, which needs to be open in the security group
 c.NotebookApp.port = {port}
 c.NotebookApp.port_retries = 0
 
-# Assume that we will run at a subdirectory when port-forwarded
-c.NotebookApp.base_project_url = '{location}/'
-c.NotebookApp.base_kernel_url = '{location}/'
-c.NotebookApp.webapp_settings = {{'static_url_prefix':'{location}/static/'}}
-
-# Note that we do not set c.NotebookApp.ip, so by default the servers will only
-# listen on localhost. We are relying on NGINX port forwarding.
-# We also do not set up encryption, which is essential to encrypt the password.
-# NGINX will do this for us. If c.NotebookApp.ip is set here then c.NotebookApp.certfile
-# should also be set.
+# Currently we are accessing the notebook directly via open ports.
+# We need to do encryption and listen on external interfaces
+c.NotebookApp.ip = '*'
+c.NotebookApp.certfile = u'{certfile}'
+c.NotebookApp.keyfile = u'{keyfile}'
 """
-#c.NotebookApp.certfile = u'/absolute/path/to/your/certificate/mycert.pem'
 
 def main():
     """ The body of the script. """
@@ -94,15 +87,31 @@ def main():
     print "Enter a password to use for ipython notebook web access:"
     password_hash = IPython.lib.passwd()
     
+    # Generate a self-signed certificate
+    # We require superuser to write to the config directory
+    logging.info("Generating self-signed certificate for SSL encryption")
+    certfile_tmp = "./instance_selfsigned_cert.pem.tmp"
+    keyfile_tmp = "./instance_selfsigned_key.pem.tmp"
+    certfile = os.path.join(profile_dir, "instance_selfsigned_cert.pem")
+    keyfile = os.path.join(profile_dir, "instance_selfsigned_key.pem")
+    run_cmd("yes '' | openssl req -x509 -nodes -days 3650 -newkey rsa:1024 -keyout "+keyfile_tmp+" -out "+certfile_tmp)
+    run_cmd("sudo mv "+certfile_tmp+" "+certfile)
+    run_cmd("sudo mv "+keyfile_tmp+" "+keyfile)
+    run_cmd("sudo chmod 440 "+keyfile)
+    
     # Overwrite the default profile config with ours
     config_file = os.path.join(profile_dir, "ipython_config.py")
     logging.info("Writing nbserver config file "+config_file)
     with open(config_file, 'wb') as f:
-        f.write(profile_config.format(hash = password_hash, port = interactive_port, location = interactive_location))
-  
+        f.write(profile_config.format(hash = password_hash, 
+                                      port = interactive_port, 
+                                      location = interactive_location,
+                                      certfile = certfile,
+                                      keyfile = keyfile))
+
 def run_cmd(command):
     """ Run a shell command. """
-    process = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     return process.communicate()  
 
 if __name__ == "__main__":

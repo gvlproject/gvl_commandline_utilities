@@ -54,8 +54,10 @@ c.NotebookApp.open_browser = False
 # Require password access. 
 c.NotebookApp.password = u'{hash}'
 
-# Use a known port, which should match that in nginx port forwarding
+# Use a known port, which should match that in nginx port forwarding.
+# Do not try any other ports.
 c.NotebookApp.port = {port}
+c.NotebookApp.port_retries = 0
 
 # Assume that we will run at a subdirectory when port-forwarded
 c.NotebookApp.base_project_url = {location}/

@@ -88,6 +88,11 @@ for ((tool_name, tool_version), dirs) in tool_shells.iteritems():
         logging.debug("Parsing "+env_path)
         with open(env_path) as f:
             for row in f:
+                # if this script is an if-fi block that just sources another env.sh script, 
+                #  ignore this whole row
+                ifmatch = re.match("^if.*\;\s*then\s+\.\s+.*env\.sh\s*\;\s*fi$", row.strip())
+                if ifmatch:
+                    continue
                 # Handle the case where multiple bash rows are on one line
                 # This also means we will see and should handle the except statements separately
                 for line in row.split(';'):
@@ -123,10 +128,14 @@ for ((tool_name, tool_version), dirs) in tool_shells.iteritems():
                                     "parsed in {1}".format(variable, env_path))     
                     elif exportmatch:
                         # An export statement; ignore
-                        pass                                   
+                        pass
+                    elif len(line.strip())==0:
+                        # An empty line; ignore
+                        pass                              
                     else:
                         # No regex match at all, we don't know what this is
                         logging.warn("Some lines could not be parsed in "+env_path)
+                        logging.debug("Unparsed line: "+line.strip())
     module_contents = "#%Module\n"
     module_contents += "# Built automatically from Galaxy env.sh tool setup files\n\n"
     module_contents += "".join(module_lines)

@@ -26,7 +26,7 @@ conf_backup=$nginx_dir"/conf/nginx.conf.bak"
 # Before starting, assert that "server {" only occurs once in the current file,
 # to prevent us running this script twice.
 # This is fragile, only intended to cope with current format.
-if [ $(grep "server" $conf_file | grep "{" | wc -l) != '1' ]; then 
+if [ $(grep 'server\s*{' $conf_file | wc -l) != '1' ]; then 
     echo "There appear to be multiple server blocks in the current nginx config; aborting.";
     exit 1;
 fi
@@ -46,7 +46,7 @@ chmod 440 $keyfile
 echo "\n\nConfiguring port-forwarding and SSL for ipython notebook ports"
 
 # Find line of current (we assume port 80) server block
-linegrep=$(grep -n "server" nginx.conf | grep "{")
+linegrep=$(grep -n 'server\s*{' $conf_file)
 linenum=${linegrep%%:*}
 
 # Insert our lines

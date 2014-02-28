@@ -88,38 +88,45 @@ for ((tool_name, tool_version), dirs) in tool_shells.iteritems():
         logging.debug("Parsing "+env_path)
         with open(env_path) as f:
             for row in f:
-                # Look for any environment variable setting, ie ^PATH= ...
-                # These lines may optionally end with ; and optionally an export statement
-                # Explicitly complain if we see lines that don't look like this
-                envmatch = re.match("^(\w+)\s*=\s*([^\;=]+)\;?(\s*export\s+\$?\w+)?$", row.strip())
-                if envmatch:
-                    variable = envmatch.group(1).strip()
-                    parts = [x.strip() for x in envmatch.group(2).split(':')]
-                    # Drop any empty strings 
-                    parts = [x for x in parts if x != '']
-                    logging.debug("Parsed variable: "+str(variable)+", list "+str(parts))
-                    # We have to translate to modulefiles.
-                    # Handle four cases:
-                    # - the variable does not appear in the list; use setenv
-                    # - the variable is at the start of the list; use append-path
-                    # - the variable is at the end of the list; use prepend-path
-                    # - the variable is in the middle of the list; complain; what silliness is this
-                    bashvar = '$'+variable
-                    if bashvar not in set(parts):
-                        module_lines.append("setenv  {0}  {1}\n".format(variable,
-                                                                    ':'.join(parts)))
-                    elif bashvar == parts[0]:
-                        module_lines.append("append-path  {0}  {1}\n".format(variable,
-                                                                    ':'.join(parts[1:])))
-                    elif bashvar == parts[-1]:
-                        module_lines.append("prepend-path  {0}  {1}\n".format(variable,
-                                                                    ':'.join(parts[:-1])))  
+                # Handle the case where multiple bash rows are on one line
+                # This also means we will see and should handle the except statements separately
+                for line in row.split(';'):
+                    # Look for any environment variable setting, ie ^PATH= ...
+                    # Ignore lines which are just export statements
+                    # Explicitly complain if we see lines that don't look like this
+                    envmatch = re.match("^(\w+)\s*=\s*([^\;=]+)$", line.strip())
+                    exportmatch = re.match("^export\s+\$?\w+", line.strip())
+                    if envmatch:
+                        variable = envmatch.group(1).strip()
+                        parts = [x.strip() for x in envmatch.group(2).split(':')]
+                        # Drop any empty strings 
+                        parts = [x for x in parts if x != '']
+                        logging.debug("Parsed variable: "+str(variable)+", list "+str(parts))
+                        # We have to translate to modulefiles.
+                        # Handle four cases:
+                        # - the variable does not appear in the list; use setenv
+                        # - the variable is at the start of the list; use append-path
+                        # - the variable is at the end of the list; use prepend-path
+                        # - the variable is in the middle of the list; complain; what silliness is this
+                        bashvar = '$'+variable
+                        if bashvar not in set(parts):
+                            module_lines.append("setenv  {0}  {1}\n".format(variable,
+                                                                        ':'.join(parts)))
+                        elif bashvar == parts[0]:
+                            module_lines.append("append-path  {0}  {1}\n".format(variable,
+                                                                        ':'.join(parts[1:])))
+                        elif bashvar == parts[-1]:
+                            module_lines.append("prepend-path  {0}  {1}\n".format(variable,
+                                                                        ':'.join(parts[:-1])))  
+                        else:
+                            logging.warn("Line for environment variable {0} could not be "\
+                                    "parsed in {1}".format(variable, env_path))     
+                    elif exportmatch:
+                        # An export statement; ignore
+                        pass                                   
                     else:
-                        logging.warn("Line for environment variable {0} could not be "\
-                                "parsed in {1}".format(variable, env_path))                                        
-                else:
-                    # No regex match at all
-                    logging.warn("Some lines could not be parsed in "+env_path)
+                        # No regex match at all, we don't know what this is
+                        logging.warn("Some lines could not be parsed in "+env_path)
     module_contents = "#%Module\n"
     module_contents += "# Built automatically from Galaxy env.sh tool setup files\n\n"
     module_contents += "".join(module_lines)

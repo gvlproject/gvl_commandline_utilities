@@ -100,7 +100,7 @@ def main():
     run_cmd("sudo chmod 440 "+keyfile)
     
     # Overwrite the default profile config with ours
-    config_file = os.path.join(profile_dir, "ipython_config.py")
+    config_file = os.path.join(profile_dir, "ipython_notebook_config.py")
     logging.info("Writing nbserver config file "+config_file)
     with open(config_file, 'wb') as f:
         f.write(profile_config.format(hash = password_hash, 

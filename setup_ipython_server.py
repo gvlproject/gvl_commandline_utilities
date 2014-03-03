@@ -80,7 +80,6 @@ def main():
     logging.info("Creating ipython profile for "+profile_name)
     profile_dir = os.path.join(ipython_dir, "profile_"+profile_name)
     run_cmd("ipython profile create "+profile_name)
-    #profile_dir = IPython.core.profiledir.ProfileDir.create_profile_dir_by_name(ipython_dir, profile_name)
 
     # Ask the user for a password; only store the hash
     logging.info("Configuring password")
@@ -88,7 +87,6 @@ def main():
     password_hash = IPython.lib.passwd()
     
     # Generate a self-signed certificate
-    # We require superuser to write to the config directory
     logging.info("Generating self-signed certificate for SSL encryption")
     certfile_tmp = "./instance_selfsigned_cert.pem.tmp"
     keyfile_tmp = "./instance_selfsigned_key.pem.tmp"

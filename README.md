@@ -7,6 +7,7 @@ run_all.sh
 ----------
 
 Run all other scripts with correct ordering and permissions.
+Also installs any missing dependencies and creates symlink to genomes directory.
 
 toolshed_to_modules.py
 ----------------------
@@ -29,13 +30,13 @@ Requires superuser permissions.
 setup_ipython_server.py and setup_nginx_forwarding.sh
 -----------------------------------------------------
 
-Configure an ipython profile to run the ipython notebook server, and configure SSL
-encryption and port forwarding in NGINX to access this server.
+Configure an ipython profile to run the ipython notebook server including 
+password-protection and SSL encryption.
 
-These scripts will not create correctly-working port forwarding on current GVL images as 
-they require NGINX >= 1.3.13 .
+We temporarily set up direct port access rather than port forwarding. This 
+should be updated when we have NGINX >= 1.3.13 installed. 
 
-setup_nginx_forwarding.sh requires superuser permissions.
+setup_nginx_forwarding.sh requires superuser permissions but is currently unused.
 
 add_research_user.sh
 --------------------

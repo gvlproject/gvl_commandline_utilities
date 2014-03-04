@@ -12,6 +12,9 @@ set -e
 echo "\n*** Creating environment modules for Galaxy Toolshed tools"
 sudo -E python toolshed_to_modules.py --force
 
+echo "\n** Creating a symlink to Galaxy reference genomes"
+ln -s /mnt/galaxyIndices/genomes ~/galaxy_genomes
+
 echo "\n*** Configuring ipython notebook server"
 
 # On the current image, jinja2 is not installed

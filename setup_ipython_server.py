@@ -65,6 +65,30 @@ c.NotebookApp.certfile = u'{certfile}'
 c.NotebookApp.keyfile = u'{keyfile}'
 """
 
+instruction_text =\
+"""
+
+================================================================================
+ipython notebook is now configured to run as a server. To launch, change to your
+working directory and run
+
+    ipython notebook --profile=nbserver
+
+Do not run this from your home directory as it will give the server access to 
+all files. If you want the server to run while you are logged out, you may want 
+to enter a screen session first by running `screen`. The next time you log in, 
+you can reconnect to it using `screen -r`.
+
+To access the running ipython notebook, point your browser to:
+
+    https://{ip_address}:{port}/
+
+Note the https in the URL! 
+You will need the password you entered during setup.
+================================================================================
+
+"""
+
 def main():
     """ The body of the script. """
 
@@ -106,6 +130,14 @@ def main():
                                       location = interactive_location,
                                       certfile = certfile,
                                       keyfile = keyfile))
+
+    # Get our IP address and tell the user what to do
+    ip_addr = cmd_output("ifconfig | grep -A 1 eth0 | grep inet | sed -nr 's/.*?addr:([0-9\\.]+).*/\\1/p'")
+    print instruction_text.format(ip_address = ip_addr, port = interactive_port)
+
+def cmd_output(command):
+    """Run a shell command and get the standard output, ignoring stderr."""
+    return run_cmd(command)[0].strip()
 
 def run_cmd(command):
     """ Run a shell command. """

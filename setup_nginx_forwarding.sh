@@ -16,7 +16,7 @@
 set -e
 
 interactive_port="9510"
-readonly_port="9560"
+readonly_port="9520"
 
 nginx_dir="/usr/nginx"
 

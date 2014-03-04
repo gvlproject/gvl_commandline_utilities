@@ -35,7 +35,7 @@ import stat
 
 profile_name = "nbserver"
 interactive_port =  9510
-readonly_port = 9560
+readonly_port = 9520
 interactive_location = "/ipython"
 
 profile_config = \

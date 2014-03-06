@@ -91,6 +91,14 @@ see a browser warning due to the self-signed certificate - this is expected.
 
 """
 
+extension_javascript = \
+"""
+require(["nbextensions/toc"], function (toc) {
+    console.log('Table of Contents extension loaded');
+    toc.load_extension();
+});
+"""
+
 def main():
     """ The body of the script. """
 
@@ -122,6 +130,17 @@ def main():
     run_cmd("sudo mv "+certfile_tmp+" "+certfile)
     run_cmd("sudo mv "+keyfile_tmp+" "+keyfile)
     run_cmd("sudo chmod 440 "+keyfile)
+
+    # Install the Table of Contents extension into this profile
+    logging.info("Installing python notebook Table of Contents extension")
+    extension_dir = os.path.join(profile_dir, 'static', 'nbextensions')
+    custom_dir = os.path.join(profile_dir, 'static', 'custom')
+    run_cmd("mkdir -p "+extension_dir)
+    run_cmd("curl https://rawgithub.com/minrk/ipython_extensions/master/nbextensions/toc.js > "+os.path.join(extension_dir,"toc.js"))
+    run_cmd("curl https://rawgithub.com/minrk/ipython_extensions/master/nbextensions/toc.css > "+os.path.join(extension_dir,"toc.css"))
+    run_cmd("mkdir -p "+custom_dir)
+    with open(os.path.join(custom_dir, "custom.js"),"wb") as f:
+        f.write(extension_javascript)
     
     # Overwrite the default profile config with ours
     config_file = os.path.join(profile_dir, "ipython_notebook_config.py")
@@ -136,6 +155,7 @@ def main():
     # Get our IP address and tell the user what to do
     ip_addr = cmd_output("ifconfig | grep -A 1 eth0 | grep inet | sed -nr 's/.*?addr:([0-9\\.]+).*/\\1/p'")
     print instruction_text.format(ip_address = ip_addr, port = interactive_port)
+
 
 def cmd_output(command):
     """Run a shell command and get the standard output, ignoring stderr."""

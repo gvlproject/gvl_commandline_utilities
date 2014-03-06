@@ -85,6 +85,8 @@ To access the running ipython notebook, point your browser to:
 
 Note the https in the URL! 
 You will need the password you entered during setup.
+Your connection will be encrypted. If you use the current default setup you will
+see a browser warning due to the self-signed certificate - this is expected.
 ================================================================================
 
 """

@@ -95,7 +95,7 @@ extension_javascript = \
 """
 require(["nbextensions/toc"], function (toc) {
     console.log('Table of Contents extension loaded');
-    toc.load_extension();
+    toc.load_ipython_extension();
 });
 """
 

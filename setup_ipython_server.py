@@ -74,8 +74,7 @@ working directory and run
 
     ipython notebook --profile=nbserver
 
-Do not run this from your home directory as it will give the server access to 
-all files. If you want the server to run while you are logged out, you may want 
+If you want the server to run while you are logged out, you may want 
 to enter a screen session first by running `screen`. The next time you log in, 
 you can reconnect to it using `screen -r`.
 
@@ -87,6 +86,10 @@ Note the https in the URL!
 You will need the password you entered during setup.
 Your connection will be encrypted. If you use the current default setup you will
 see a browser warning due to the self-signed certificate - this is expected.
+
+Anyone who knows the password to your notebook server will be able to execute
+arbitrary code on your server, so keep this password private. You should treat
+it as you would your ssh login credentials.
 ================================================================================
 
 """

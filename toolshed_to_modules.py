@@ -154,7 +154,7 @@ for ((tool_name, tool_version), dirs) in tool_shells.iteritems():
     f.write(module_contents)
     f.close()
 
-#TODO it would be nice to grab some extra module-whatis information from the xml files
+#TODO it would be nice to grab some extra module-whatis information and inter-module dependencies from the xml files
 
 
 

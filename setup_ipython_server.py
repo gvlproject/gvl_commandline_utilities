@@ -23,10 +23,6 @@ This script will:
 # Authored as part of the Genomics Virtual Laboratory project
 ##
 
-# TODO: at end, tell user how to use
-# TODO: add Table of Contents plugin
-# TODO: set up readonly as well as interactive server
-
 import os
 import IPython.lib
 import logging

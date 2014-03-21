@@ -1,9 +1,7 @@
 
-username='researcher'
+username=$1
 
 echo "Creating account for "$username
-sudo useradd $username
+sudo adduser --disabled-password --gecos "" $username
 echo "Setting password for "$username
 sudo passwd $username
-
-# TODO: we may want to configure a public_html for this account

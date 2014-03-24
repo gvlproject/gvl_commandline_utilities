@@ -112,6 +112,9 @@ def main():
     # Initialise logging to print info to screen
     logging.basicConfig(level=logging.INFO)
 
+    # Get locations
+    ipython_dir = IPython.utils.path.get_ipython_dir()
+
     # Create the nbserver profile
     logging.info("Creating ipython profile for "+profile_name)
     profile_dir = os.path.join(ipython_dir, "profile_"+profile_name)
@@ -124,13 +127,9 @@ def main():
     
     # Generate a self-signed certificate
     logging.info("Generating self-signed certificate for SSL encryption")
-    certfile_tmp = "./instance_selfsigned_cert.pem.tmp"
-    keyfile_tmp = "./instance_selfsigned_key.pem.tmp"
     certfile = os.path.join(profile_dir, "instance_selfsigned_cert.pem")
     keyfile = os.path.join(profile_dir, "instance_selfsigned_key.pem")
-    run_cmd("yes '' | openssl req -x509 -nodes -days 3650 -newkey rsa:1024 -keyout "+keyfile_tmp+" -out "+certfile_tmp)
-    run_cmd("mv "+certfile_tmp+" "+certfile)
-    run_cmd("mv "+keyfile_tmp+" "+keyfile)
+    run_cmd("yes '' | openssl req -x509 -nodes -days 3650 -newkey rsa:1024 -keyout "+keyfile+" -out "+certfile)
     run_cmd("chmod 440 "+keyfile)
 
     # Install the Table of Contents extension into this profile

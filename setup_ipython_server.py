@@ -16,6 +16,9 @@ This script will:
 * Configure HTTPS encryption
 * Configure port settings
 * Install the Table of Contents plugin
+
+This script can be run by an individual non-sudo user to configure an
+nbserver profile in their own account.
 """
 
 ##
@@ -109,11 +112,6 @@ def main():
     # Initialise logging to print info to screen
     logging.basicConfig(level=logging.INFO)
 
-    # Get locations
-    ipython_dir = IPython.utils.path.get_ipython_dir()
-    nginx_dir = "/usr/nginx/conf"
-    nginx_conf = os.path.join(nginx_dir, "nginx.conf")
-
     # Create the nbserver profile
     logging.info("Creating ipython profile for "+profile_name)
     profile_dir = os.path.join(ipython_dir, "profile_"+profile_name)
@@ -131,9 +129,9 @@ def main():
     certfile = os.path.join(profile_dir, "instance_selfsigned_cert.pem")
     keyfile = os.path.join(profile_dir, "instance_selfsigned_key.pem")
     run_cmd("yes '' | openssl req -x509 -nodes -days 3650 -newkey rsa:1024 -keyout "+keyfile_tmp+" -out "+certfile_tmp)
-    run_cmd("sudo mv "+certfile_tmp+" "+certfile)
-    run_cmd("sudo mv "+keyfile_tmp+" "+keyfile)
-    run_cmd("sudo chmod 440 "+keyfile)
+    run_cmd("mv "+certfile_tmp+" "+certfile)
+    run_cmd("mv "+keyfile_tmp+" "+keyfile)
+    run_cmd("chmod 440 "+keyfile)
 
     # Install the Table of Contents extension into this profile
     logging.info("Installing python notebook Table of Contents extension")

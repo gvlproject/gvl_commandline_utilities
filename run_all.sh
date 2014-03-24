@@ -1,4 +1,10 @@
 
+# Master script: run all scripts with necessary permissions.
+# This script will create a non-sudo user called "researcher"
+# which should be used for research and non-admin tasks.
+
+# Clare Sloggett, VLSCI, University of Melbourne
+# Authored as part of the Genomics Virtual Laboratory project
 
 # Exit on any failure so we can troubleshoot
 set -e

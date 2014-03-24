@@ -2,6 +2,12 @@
 # Add a public_html directory and redirect for the specified user
 # This script must be run as superuser
 #   e.g. usage:  sudo sh add_public_html.sh researcher
+#
+# This script assumes that we are using a GVL image with pre-configured port_forwarding.
+# To set this up yourself, before running this script:
+# 1. create an empty file /usr/nginx/conf/port_forwarding.conf
+# 2. add a line to /usr/nginx/conf/nginx.conf inside the http{ server{ section, like so:
+#       include port_forwarding.conf;
 
 # Clare Sloggett, VLSCI, University of Melbourne
 # Authored as part of the Genomics Virtual Laboratory project

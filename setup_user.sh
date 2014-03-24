@@ -2,8 +2,11 @@
 # Add a new (non-sudo) user and do per-user config of convenience utilities
 # Currently these are
 #  - symlink to genomes directory
-#  - public_html directory with nginx port forwarding
+#  - symlink to galaxy app directory
+#  - public_html directory with nginx port forwarding (currently disabled)
 #  - configure an ipython notebook profile for secure access over the web
+#
+# Module files for toolshed tools are configured for all users, not here.
 
 # Clare Sloggett, VLSCI, University of Melbourne
 # Authored as part of the Genomics Virtual Laboratory project
@@ -30,6 +33,10 @@ sudo passwd $username
 # Add symlink to genomes directory on CloudMan instances
 echo "\n** Creating a symlink to Galaxy reference genomes for "$username
 sudo su $username -c 'if [ ! -d ~/galaxy_genomes ]; then ln -s /mnt/galaxyIndices/genomes ~/galaxy_genomes; fi'
+
+# Add symlink to galaxy app directory on CloudMan instances
+echo "\n** Creating a symlink to Galaxy for "$username
+sudo su $username -c 'if [ ! -d ~/galaxy ]; then ln -s /mnt/galaxy/galaxy-app ~/galaxy; fi'
 
 echo "\n*** Configuring ipython notebook server for "$username
 

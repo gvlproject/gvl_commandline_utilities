@@ -15,7 +15,10 @@ set -e
 
 # Create the user
 echo "\n** Creating a non-sudo account for user "$username
-sudo sh add_research_user.sh $username
+echo "Creating account for "$username
+sudo adduser --disabled-password --gecos "" $username
+echo "Setting password for "$username
+sudo passwd $username
 
 # Set up public_html redirect for user at http://ip-addr/public/us.
 # This is dependent on an already existing 

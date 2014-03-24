@@ -1,4 +1,6 @@
 
+# Add a non-sudo user and request password
+
 username=$1
 
 echo "Creating account for "$username

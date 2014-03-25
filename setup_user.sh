@@ -3,7 +3,7 @@
 # Currently these are
 #  - symlink to genomes directory
 #  - symlink to galaxy app directory
-#  - public_html directory with nginx port forwarding (currently disabled)
+#  - public_html directory with nginx forwarding (currently disabled)
 #  - configure an ipython notebook profile for secure access over the web
 #
 # Module files for toolshed tools are configured for all users, not here.
@@ -25,8 +25,8 @@ sudo passwd $username
 
 # Set up public_html redirect for user at http://ip-addr/public/us.
 # This is dependent on an already existing 
-# /usr/nginx/conf/port_forwarding.conf (which may be empty)
-# and an `include port_forwarding.conf` statement in nginx.conf 
+# /usr/nginx/conf/public_html.conf (which may be empty)
+# and an `include public_html.conf` statement in nginx.conf 
 #echo "\n** Creating a public_html directory for user "$username
 #sudo sh add_public_html.sh $username
 

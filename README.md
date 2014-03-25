@@ -75,6 +75,7 @@ Usage:
 
     sudo sh add_public_html.sh <username>
 
-This script assumes that you are using a GVL image with pre-configured port_forwarding,
-i.e. an existing /usr/nginx/conf/port_forwarding.conf file configured into nginx.conf .
+This script assumes that you are using a GVL image with a pre-configured config file,
+i.e. an existing /usr/nginx/conf/public_html.conf file with an include statement in
+ nginx.conf .
 

@@ -16,3 +16,4 @@ sudo -E python toolshed_to_modules.py --force
 
 # Add the default non-sudo account 'researcher'
 sh setup_user.sh researcher
+

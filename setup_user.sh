@@ -45,3 +45,8 @@ sudo pip install jinja2
 
 # Configure ipython notebook server
 sudo su $username -c 'python setup_ipython_server.py'
+
+# Write out user README file
+echo "\n*** Writing ~/README.txt for "$username" - please consult for setup details.\n"
+sudo su $username -c 'python write_readme.py'
+

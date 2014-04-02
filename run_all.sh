@@ -17,3 +17,21 @@ sudo -E python toolshed_to_modules.py --force
 # Add the default non-sudo account 'researcher'
 sh setup_user.sh researcher
 
+# Print out getting-started info
+info="
+==================================================================================
+
+This instance has now been configured with a non-sudo account called researcher.
+You should use this account for non-admin tasks. 
+
+To get started straight away and find out about available resources, 
+run the following commands:
+
+  su researcher
+  cd 
+  less README.txt
+
+==================================================================================
+"
+
+echo "$info"

@@ -3,11 +3,18 @@ gvl_commandline_utilities
 
 Miscellaneous scripts useful for users of the GVL cloud images (CloudMan instances).
 
+To use, launch a GVL instance ( http://launch.genome.edu.au/ ), ssh in as user ubuntu, and run
+
+    git clone https://github.com/claresloggett/gvl_commandline_utilities
+    cd gvl_commandline_utilities
+    sh run_all.sh
+
 *** Please note *** 
 
 Currently we have an issue in which the port used by IPython Notebook (9510) may not be open for Research Cloud users. We should have a fix for this shortly. In the meantime, if you are trying to use IPython Notebook, you can open the port on your instance manually using the Research Cloud dashboard ( https://dashboard.rc.nectar.org.au/ ): 
 
 Select Access & Security -> Security Groups -> CloudMan - Edit Rules -> Add Rule , and add port 9510 .
+
 
 run_all.sh
 ----------

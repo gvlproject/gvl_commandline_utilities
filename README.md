@@ -46,9 +46,10 @@ clean up the module file.
 
 To use run:
 
-    python toolshed_to_modules.py -h
-    
-Requires superuser permissions.
+    sudo -E python toolshed_to_modules.py -h
+
+Requires superuser permissions, and makes use of environment variables specifying module 
+locations.
 
 setup_user.sh
 -------------

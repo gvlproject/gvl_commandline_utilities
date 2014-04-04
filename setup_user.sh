@@ -23,6 +23,11 @@ sudo adduser --disabled-password --gecos "" $username
 echo "Setting password for "$username
 sudo passwd $username
 
+# Add user to rstudio_users, if that group exists
+if [ $(getent group | grep rstudio_users | wc -l) != '0' ]; then
+    sudo usermod -G rstudio_users $username
+fi
+
 # Set up public_html redirect for user at http://ip-addr/public/us.
 # This is dependent on an already existing 
 # /usr/nginx/conf/public_html.conf (which may be empty)

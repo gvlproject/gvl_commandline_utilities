@@ -51,6 +51,18 @@ To use run:
 Requires superuser permissions, and makes use of environment variables specifying module 
 locations.
 
+setup_rstudio.sh
+----------------
+
+Install and configure RStudio. This will create a group called rstudio_users, which
+ordinary user accounts will be added to by setup_user.sh.
+
+To use run:
+
+    sudo setup_rstudio.sh
+    
+Requires superuser permissions.
+
 setup_user.sh
 -------------
 

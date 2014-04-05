@@ -1,6 +1,9 @@
 
-# Install RStudio on a GLV instance
-# This script must be run with superuser permissions
+# Install RStudio on a GLV instance.
+# This script must be run with superuser permissions.
+
+# Clare Sloggett, VLSCI, University of Melbourne
+# Authored as part of the Genomics Virtual Laboratory project
 
 echo "Installing RStudio and dependencies"
 

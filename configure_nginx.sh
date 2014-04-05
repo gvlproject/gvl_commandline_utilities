@@ -29,3 +29,9 @@ touch $conf_dir"/public_html.conf"
 touch $conf_dir"/rstudio_nginx.conf"
 
 
+#### Restart NGINX
+
+echo "\nRestarting NGINX with new config"
+
+/usr/nginx/sbin/nginx -s reload
+

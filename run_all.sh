@@ -19,8 +19,8 @@ echo "\n*** Configuring NGINX"
 sudo sh configure_nginx.sh
 
 # Install and configure RStudio
-#echo "\n*** Installing RStudio and configuring for non-sudo users"
-#sudo sh setup_rstudio.sh
+echo "\n*** Installing RStudio and configuring for non-sudo users"
+sudo sh setup_rstudio.sh
 
 # Add the default non-sudo account 'researcher'
 sh setup_user.sh researcher

@@ -32,8 +32,8 @@ fi
 # This is dependent on an already existing 
 # /usr/nginx/conf/public_html.conf (which may be empty)
 # configured into NGINX using configure_nginx.sh
-#echo "\n** Creating a public_html directory for user "$username
-#sudo sh add_public_html.sh $username
+echo "\n** Creating a public_html directory for user "$username
+sudo sh add_public_html.sh $username
 
 # Add symlink to genomes directory on CloudMan instances
 echo "\n** Creating a symlink to Galaxy reference genomes for "$username

@@ -1,5 +1,6 @@
 
 # Install RStudio on a GLV instance.
+# Assumes that configure_nginx.conf has been run to set up port forwarding.
 # This script must be run with superuser permissions.
 
 # Clare Sloggett, VLSCI, University of Melbourne

@@ -9,12 +9,9 @@ To use, launch a GVL instance ( http://launch.genome.edu.au/ ), ssh in as user u
     cd gvl_commandline_utilities
     sh run_all.sh
 
-*** Please note *** 
-
-Currently we have an issue in which the port used by IPython Notebook (9510) may not be open for Research Cloud users. We should have a fix for this shortly. In the meantime, if you are trying to use IPython Notebook, you can open the port on your instance manually using the Research Cloud dashboard ( https://dashboard.rc.nectar.org.au/ ): 
-
-Select Access & Security -> Security Groups -> CloudMan - Edit Rules -> Add Rule , and add port 9510 .
-
+This version of gvl_commandline_utilities is intended to run on GVL image v2.15 or later. 
+Some of the scripts are dependent on the correct config hooks being available in 
+/usr/nginx/conf/nginx.conf .
 
 run_all.sh
 ----------
@@ -44,24 +41,41 @@ different installed versions of the same tool.
 If a Toolshed-installed tool is uninstalled from Galaxy, running this script should
 clean up the module file.
 
-To use run:
+Usage:
 
     sudo -E python toolshed_to_modules.py -h
 
 Requires superuser permissions, and makes use of environment variables specifying module 
 locations.
 
+configure_nginx.sh
+------------------
+
+Set up NGINX config file structure necessary to configure RStudio, public_html, and 
+IPython Notebook.
+
+This script is intended to run on GVL image v2.15 or later. It assumes that the 
+placeholder config files commandline_utilities_http.conf and 
+commandline_utilities_https.conf have been configured into /usr/nginx/conf/nginx.conf .
+
+Usage:
+
+    sudo sh configure_nginx.sh
+
+Requires superuser permissions. 
+
 setup_rstudio.sh
 ----------------
 
 Install and configure RStudio. This will create a group called rstudio_users, which
-ordinary user accounts will be added to by setup_user.sh.
+ordinary user accounts will be added to by setup_user.sh. RStudio will be available
+at http://your-url/rstudio/
 
 To use run:
 
     sudo setup_rstudio.sh
     
-Requires superuser permissions.
+Requires superuser permissions. Assumes that configure_nginx.sh has been run.
 
 setup_user.sh
 -------------
@@ -98,13 +112,10 @@ add_public_html.sh
 ------------------
 
 Create a public_html directory and redirect for the specified user. 
-This script must be run as superuser.
 
 Usage:
 
     sudo sh add_public_html.sh <username>
 
-This script assumes that you are using a GVL image with a pre-configured config file,
-i.e. an existing /usr/nginx/conf/public_html.conf file with an include statement in
- nginx.conf .
+Requires superuser permissions. Assumes that configure_nginx.sh has been run.
 

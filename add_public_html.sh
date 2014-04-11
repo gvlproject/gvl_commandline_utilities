@@ -4,10 +4,7 @@
 #   e.g. usage:  sudo sh add_public_html.sh researcher
 #
 # This script assumes that we are using a GVL image with a pre-configured config file.
-# To set this up yourself, before running this script:
-# 1. create an empty file /usr/nginx/conf/public_html.conf
-# 2. add a line to /usr/nginx/conf/nginx.conf inside the http{ server{ section, like so:
-#       include public_html.conf;
+# This is usually achieved by running configure_nginx.sh forst.
 
 # Clare Sloggett, VLSCI, University of Melbourne
 # Authored as part of the Genomics Virtual Laboratory project

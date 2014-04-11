@@ -14,6 +14,10 @@ set -e
 echo "\n*** Creating environment modules for Galaxy Toolshed tools"
 sudo -E python toolshed_to_modules.py --force
 
+# Write required NGINX config structure for services below
+echo "\n*** Configuring NGINX"
+sudo sh configure_nginx.sh
+
 # Install and configure RStudio
 #echo "\n*** Installing RStudio and configuring for non-sudo users"
 #sudo sh setup_rstudio.sh

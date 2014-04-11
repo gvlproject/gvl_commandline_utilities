@@ -61,7 +61,7 @@ it as you would your ssh login credentials.
 If you are seeing this file, then under most circumstances RStudio will be installed
 on this instance and available at
 
-    http://{ip_address}/rstudio
+    http://{ip_address}/rstudio/
 
 You can log in using the same credentials as this linux account, i.e. your
 RStudio username is {username}.

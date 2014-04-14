@@ -93,8 +93,6 @@ Usage:
 setup_ipython_server.py
 -----------------------
 
-*** Please note we currently have an issue in which the port used by IPython Notebook may not be open - see above. ***
-
 Configure an ipython notebook profile to run the ipython notebook server including 
 password-protection and SSL encryption. The notebook server, when running, will be
 available on the port specified in this script (9510).

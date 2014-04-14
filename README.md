@@ -18,11 +18,10 @@ run_all.sh
 
 Run all other scripts with correct ordering and permissions.
 
-Any utilities which need to be configured for all users will be configured (currently
-only environment modules).
+Any utilities which need to be configured for all users will be configured.
 
 An ordinary user account called "researcher" will be created for non-admin use, 
-and configured with the other utilities below.
+and configured with per-user utilities.
 
 Usage:
     
@@ -52,7 +51,7 @@ configure_nginx.sh
 ------------------
 
 Set up NGINX config file structure necessary to configure RStudio, public_html, and 
-IPython Notebook.
+(in the future) IPython Notebook.
 
 This script is intended to run on GVL image v2.15 or later. It assumes that the 
 placeholder config files commandline_utilities_http.conf and 
@@ -84,7 +83,8 @@ Run all scripts below which apply to an individual user. This script can be run 
 times to create and configure multiple non-sudo user accounts. 
 
 Currently it will create the account; create home-directory symlinks to reference genomes 
-and to galaxy; and configure an ipython notebook profile to run securely over the web.
+and to galaxy; create a public_html directory; and configure an ipython notebook profile 
+to run securely over the web.
 
 Usage:
 

@@ -45,7 +45,7 @@ you can reconnect to it using `screen -r`.
 
 To access the running ipython notebook, point your browser to:
 
-    https://{ip_address}:{port}/
+    https://{ip_address}/ipython/
 
 Note the https in the URL! 
 You will need the password you entered during setup.
@@ -55,6 +55,9 @@ see a browser warning due to the self-signed certificate - this is expected.
 Anyone who knows the password to your notebook server will be able to execute
 arbitrary code under your account, so keep this password private. You should treat
 it as you would your ssh login credentials.
+
+Under the default configuration, only ONE user can run IPython Notebook at a time.
+If you have multiple users, you may want to alter your config.
 
 --
 

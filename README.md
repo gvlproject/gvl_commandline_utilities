@@ -50,8 +50,8 @@ locations.
 configure_nginx.sh
 ------------------
 
-Set up NGINX config file structure necessary to configure RStudio, public_html, and 
-(in the future) IPython Notebook.
+Set up NGINX config file structure necessary to configure RStudio, public_html, and
+IPython Notebook.
 
 This script is intended to run on GVL image v2.15 or later. It assumes that the 
 placeholder config files commandline_utilities_http.conf and 
@@ -95,7 +95,7 @@ setup_ipython_server.py
 
 Configure an ipython notebook profile to run the ipython notebook server including 
 password-protection and SSL encryption. The notebook server, when running, will be
-available on the port specified in this script (9510).
+available at http://your-url/ipython/
 
 This script does not require sudo and can be run by an individual user to configure
 IPython Notebook under their account. It should _not_ be run by the suduer account ubuntu, 
@@ -104,7 +104,11 @@ as it is dangerous to launch a notebook server from this account.
 Usage (as the appropriate user):
 
     python setup_ipython_server.py
-    
+
+This script assumes that configure_nginx.sh has been run to set up the appropriate
+port forwarding. Note that under the default config, only ONE user can run IPython
+Notebook at any one time. More advanced configurations are possible which allow multiple
+instances to be served up at different addresses or different ports.
 
 add_public_html.sh
 ------------------

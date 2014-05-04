@@ -6,19 +6,18 @@ After running this script, change to your project directory and run
 
    ipython notebook --profile=nbserver
 
-For security, you should not launch ipython notebook from your home directory, 
-as it will have access to files in the directory tree it is run from.
-Create a notebook or project directory and launch it from there.
-
 This script will:
 * Create a profile (nbserver) to use for the notebook server
 * Configure password protection
-* Configure HTTPS encryption
-* Configure port settings
+* Configure the location and port to run behind our NGINX port forwarding
 * Install the Table of Contents plugin
 
 This script can be run by an individual non-sudo user to configure an
 nbserver profile in their own account.
+
+Under the default configuration, only ONE user can run IPython Notebook at a time,
+as we are taking advantage of a single forwarded port. If you have multiple users, you
+may want to alter your config.
 """
 
 ##
@@ -33,9 +32,8 @@ import subprocess
 import stat
 
 profile_name = "nbserver"
-interactive_port =  9510
-readonly_port = 9520
-interactive_location = "/ipython"
+ipython_port =  9510
+ipython_location = "/ipython"
 
 profile_config = \
 """
@@ -55,18 +53,30 @@ c.InteractiveShellApp.extensions = [
 # Do not open local browser, just run as a server
 c.NotebookApp.open_browser = False
 
-# Require password access. 
+# Require password authentication
 c.NotebookApp.password = u'{hash}'
 
-# Use a known port, which needs to be open in the security group
+# Use a known port, which should match that in nginx port forwarding.
+# Do not try any other ports.
+# If you are editing your config to allow multiple instances of IPython Notebook
+# to run simultaneously, you may want to change these settings.
 c.NotebookApp.port = {port}
 c.NotebookApp.port_retries = 0
 
-# Currently we are accessing the notebook directly via open ports.
-# We need to do encryption and listen on external interfaces
-c.NotebookApp.ip = '*'
-c.NotebookApp.certfile = u'{certfile}'
-c.NotebookApp.keyfile = u'{keyfile}'
+# Assume that we will run at a subdirectory when port-forwarded
+c.NotebookApp.base_project_url = '{location}/'
+c.NotebookApp.base_kernel_url = '{location}/'
+c.NotebookApp.webapp_settings = {{'static_url_prefix':'{location}/static/'}}
+
+# Above, we do not set c.NotebookApp.ip, so by default Notebook will only
+# listen on localhost. We are relying on NGINX port forwarding.
+# We also do not set up encryption, as NGINX will do this for us.
+# If you want to use open ports directly instead, we have created self-signed
+# certificates for convenience. Comment out the subdirectory config above and uncomment
+# the following lines:
+#c.NotebookApp.ip = '*'
+#c.NotebookApp.certfile = u'{certfile}'
+#c.NotebookApp.keyfile = u'{keyfile}'
 """
 
 instruction_text =\
@@ -124,11 +134,11 @@ def main():
     logging.info("Configuring password")
     print "Enter a password to use for ipython notebook web access:"
     password_hash = IPython.lib.passwd()
-    
+
     # Generate a self-signed certificate
     logging.info("Generating self-signed certificate for SSL encryption")
-    certfile = os.path.join(profile_dir, "instance_selfsigned_cert.pem")
-    keyfile = os.path.join(profile_dir, "instance_selfsigned_key.pem")
+    certfile = os.path.join(profile_dir, "user_selfsigned_cert.pem")
+    keyfile = os.path.join(profile_dir, "user_selfsigned_key.pem")
     run_cmd("yes '' | openssl req -x509 -nodes -days 3650 -newkey rsa:1024 -keyout "+keyfile+" -out "+certfile)
     run_cmd("chmod 440 "+keyfile)
 
@@ -142,20 +152,20 @@ def main():
     run_cmd("mkdir -p "+custom_dir)
     with open(os.path.join(custom_dir, "custom.js"),"wb") as f:
         f.write(extension_javascript)
-    
+
     # Overwrite the default profile config with ours
     config_file = os.path.join(profile_dir, "ipython_notebook_config.py")
     logging.info("Writing nbserver config file "+config_file)
     with open(config_file, 'wb') as f:
-        f.write(profile_config.format(hash = password_hash, 
-                                      port = interactive_port, 
-                                      location = interactive_location,
+        f.write(profile_config.format(hash = password_hash,
+                                      port = ipython_port,
+                                      location = ipython_location,
                                       certfile = certfile,
                                       keyfile = keyfile))
 
     # Get our IP address and tell the user what to do
     ip_addr = cmd_output("ifconfig | grep -A 1 eth0 | grep inet | sed -nr 's/.*?addr:([0-9\\.]+).*/\\1/p'")
-    print instruction_text.format(ip_address = ip_addr, port = interactive_port)
+    print instruction_text.format(ip_address = ip_addr, port = ipython_port)
 
 
 def cmd_output(command):

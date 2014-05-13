@@ -11,6 +11,7 @@ This script will:
 * Configure password protection
 * Configure the location and port to run behind our NGINX port forwarding
 * Install the Table of Contents plugin
+* Install MathJax locally
 
 This script can be run by an individual non-sudo user to configure an
 nbserver profile in their own account.
@@ -141,6 +142,12 @@ def main():
     keyfile = os.path.join(profile_dir, "user_selfsigned_key.pem")
     run_cmd("yes '' | openssl req -x509 -nodes -days 3650 -newkey rsa:1024 -keyout "+keyfile+" -out "+certfile)
     run_cmd("chmod 440 "+keyfile)
+
+    # Install MathJax locally (into this profile)
+    # Note that this import will fail if the default(?) profile isn't created beforehand
+    from IPython.external.mathjax import install_mathjax
+    mathjax_dest = os.path.join(profile_dir, 'static', 'mathjax' )
+    install_mathjax(dest = mathjax_dest)
 
     # Install the Table of Contents extension into this profile
     logging.info("Installing python notebook Table of Contents extension")

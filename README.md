@@ -9,7 +9,7 @@ To use, launch a GVL instance ( http://launch.genome.edu.au/ ), ssh in as user u
     cd gvl_commandline_utilities
     sh run_all.sh
 
-This version of gvl_commandline_utilities is intended to run on GVL image v2.15 or later. 
+This version of gvl_commandline_utilities is intended to run on GVL image v2.19 or later. 
 Some of the scripts are dependent on the correct config hooks being available in 
 /usr/nginx/conf/nginx.conf .
 
@@ -40,7 +40,7 @@ different installed versions of the same tool.
 If a Toolshed-installed tool is uninstalled from Galaxy, running this script should
 clean up the module file.
 
-Usage:
+Usage (show help):
 
     sudo -E python toolshed_to_modules.py -h
 
@@ -53,7 +53,7 @@ configure_nginx.sh
 Set up NGINX config file structure necessary to configure RStudio, public_html, and
 IPython Notebook.
 
-This script is intended to run on GVL image v2.15 or later. It assumes that the 
+This script is intended to run on GVL image v2.19 or later. It assumes that the 
 placeholder config files commandline_utilities_http.conf and 
 commandline_utilities_https.conf have been configured into /usr/nginx/conf/nginx.conf .
 

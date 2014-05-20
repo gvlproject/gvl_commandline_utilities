@@ -154,8 +154,8 @@ def main():
     extension_dir = os.path.join(profile_dir, 'static', 'nbextensions')
     custom_dir = os.path.join(profile_dir, 'static', 'custom')
     run_cmd("mkdir -p "+extension_dir)
-    run_cmd("curl https://rawgithub.com/minrk/ipython_extensions/master/nbextensions/toc.js > "+os.path.join(extension_dir,"toc.js"))
-    run_cmd("curl https://rawgithub.com/minrk/ipython_extensions/master/nbextensions/toc.css > "+os.path.join(extension_dir,"toc.css"))
+    run_cmd("curl -L https://rawgithub.com/minrk/ipython_extensions/master/nbextensions/toc.js > "+os.path.join(extension_dir,"toc.js"))
+    run_cmd("curl -L https://rawgithub.com/minrk/ipython_extensions/master/nbextensions/toc.css > "+os.path.join(extension_dir,"toc.css"))
     run_cmd("mkdir -p "+custom_dir)
     with open(os.path.join(custom_dir, "custom.js"),"wb") as f:
         f.write(extension_javascript)

@@ -19,7 +19,8 @@ set -e
 # Create the user
 echo "\n** Creating a non-sudo account for user "$username
 echo "Creating account for "$username
-sudo adduser --disabled-password --gecos "" $username
+sudo adduser --disabled-password --gecos "" $username --home "/mnt/galaxy/export/gvl_home_directories/"$username
+sudo ln -s "/mnt/galaxy/export/gvl_home_directories/"$username "/home/"$username
 echo "Setting password for "$username
 sudo passwd $username
 

@@ -1,7 +1,7 @@
 gvl_commandline_utilities
 =========================
 
-Miscellaneous scripts useful for users of the GVL cloud images (CloudMan instances).
+Miscellaneous scripts useful for users of the GVL cloud images (CloudMan instances). These scripts configure GVL instances as command-line bioinformatics platforms, including RStudio and IPython Notebook setup.
 
 To use, launch a GVL instance ( http://launch.genome.edu.au/ ), ssh in as user ubuntu, and run
 
@@ -12,6 +12,11 @@ To use, launch a GVL instance ( http://launch.genome.edu.au/ ), ssh in as user u
 This version of gvl_commandline_utilities is intended to run on GVL image v2.19 or later. 
 Some of the scripts are dependent on the correct config hooks being available in 
 /usr/nginx/conf/nginx.conf .
+
+The main scripts you are likely to want to run yourself are:
+* run_all.sh : configure your instance for command-line use and install services.
+* setup_user.sh : after running run_all.sh, can be run again to configure additional user accounts.
+* toolshed_to_modules.py : after running run_all.sh, can be run again to update module files. This is useful if tools have been added or removed using the Galaxy Toolshed.
 
 run_all.sh
 ----------

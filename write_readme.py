@@ -27,6 +27,21 @@ The Galaxy application directory can be found via the symlink ~/galaxy .
 
 --
 
+Galaxy datasets can be mounted and read directly using the galaxy-fuse.py
+script in this directory. To do this you will need your Galaxy API key, found by
+logging into Galaxy at http//{ip-address}/ and selecting the menu option
+User -> API Keys. You can mount your Galaxy datasets using a command like
+
+    python galaxy-fuse.py galaxy_files <api-key> &
+
+This puts the galaxy-fuse process into the background. Galaxy Datasets will then
+appear as read-only files, organised by History, under the directory galaxy_files.
+
+galaxy-fuse.py is written by Dr David Powell and the source and documentation are
+available at https://github.com/drpowell/galaxy-fuse .
+
+--
+
 A web-accessible folder can be found at ~/public_html . Any files you place in this
 directory will be _publicly_ accessible at
 

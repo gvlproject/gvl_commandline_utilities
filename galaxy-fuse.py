@@ -5,6 +5,7 @@ from stat import S_IFDIR, S_IFREG, S_IFLNK
 from sys import argv, exit
 import re
 import time
+import os
 
 from fuse import FUSE, FuseOSError, Operations, LoggingMixIn, fuse_get_context
 
@@ -169,4 +170,10 @@ if __name__ == '__main__':
         print('usage: %s <mountpoint> <your_api_key>' % argv[0])
         exit(1)
 
-    fuse = FUSE(Context(argv[2]), argv[1], foreground=True, ro=True)
+    mountpoint, key = argv[1:3]
+
+    # Create the directory if it does not exist
+    if not os.path.exists(mountpoint):
+        os.makedirs(mountpoint)
+
+    fuse = FUSE(Context(key), mountpoint, foreground=True, ro=True)

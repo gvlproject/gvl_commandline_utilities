@@ -37,9 +37,6 @@ User -> API Keys. You can mount your Galaxy datasets using a command like
 This puts the galaxy-fuse process into the background. Galaxy Datasets will then
 appear as read-only files, organised by History, under the directory galaxy_files.
 
-galaxy-fuse.py is written by Dr David Powell and the source and documentation are
-available at https://github.com/drpowell/galaxy-fuse .
-
 --
 
 A web-accessible folder can be found at ~/public_html . Any files you place in this

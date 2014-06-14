@@ -1,5 +1,21 @@
 #!/usr/bin/env python
 
+"""
+galaxy-fuse.py will mount Galaxy datasets for direct read access using FUSE.
+
+To do this you will need your Galaxy API key, found by logging into Galaxy and
+selecting the menu option User -> API Keys. You can mount your Galaxy datasets
+using a command like
+
+    python galaxy-fuse.py galaxy_files <api-key> &
+
+This puts the galaxy-fuse process into the background. Galaxy Datasets will then
+appear as read-only files, organised by History, under the directory galaxy_files.
+
+galaxy-fuse was written by Dr David Powell and began life at
+https://github.com/drpowell/galaxy-fuse .
+"""
+
 from errno import ENOENT
 from stat import S_IFDIR, S_IFREG, S_IFLNK
 from sys import argv, exit

@@ -1,7 +1,8 @@
 gvl_commandline_utilities
 =========================
 
-Miscellaneous scripts useful for users of the GVL cloud images (CloudMan instances). These scripts configure GVL instances as command-line bioinformatics platforms, including RStudio and IPython Notebook setup.
+Miscellaneous scripts useful for users of the GVL cloud images (CloudMan instances).
+These scripts configure GVL instances as command-line bioinformatics platforms, including RStudio and IPython Notebook setup.
 
 To use, launch a GVL instance ( http://launch.genome.edu.au/ ), ssh in as user ubuntu, and run
 
@@ -9,7 +10,7 @@ To use, launch a GVL instance ( http://launch.genome.edu.au/ ), ssh in as user u
     cd gvl_commandline_utilities
     sh run_all.sh
 
-This version of gvl_commandline_utilities is intended to run on GVL image v2.19 or later.
+This version of gvl_commandline_utilities is intended to run on GVL image v2.20 or later.
 Some of the scripts are dependent on the correct config hooks being available in
 /usr/nginx/conf/nginx.conf .
 
@@ -17,11 +18,12 @@ The main scripts you are likely to want to run yourself are:
 * run_all.sh : configure your instance for command-line use and install services.
 * setup_user.sh : after running run_all.sh, can be run again to configure additional user accounts.
 * toolshed_to_modules.py : after running run_all.sh, can be run again to update module files. This is useful if tools have been added or removed using the Galaxy Toolshed.
+* galaxy-fuse.py : an ordinary user can run this script to set up access to their Galaxy Datasets, if they have a Galaxy account.
 
 run_all.sh
 ----------
 
-Run all other scripts with correct ordering and permissions.
+Run other scripts with correct ordering and permissions.
 
 Any utilities which need to be configured for all users will be configured.
 
@@ -88,8 +90,8 @@ Run all scripts below which apply to an individual user. This script can be run 
 times to create and configure multiple non-sudo user accounts.
 
 Currently it will create the account; create home-directory symlinks to reference genomes
-and to galaxy; create a public_html directory; and configure an ipython notebook profile
-to run securely over the web.
+and to galaxy; create a public_html directory; configure an ipython notebook profile
+to run securely over the web; and copy in `galaxy-fuse.py`.
 
 Usage:
 
@@ -126,3 +128,27 @@ Usage:
 
 Requires superuser permissions. Assumes that configure_nginx.sh has been run.
 
+galaxy-fuse.py
+--------------
+
+This script can be found in the home directory of each ordinary user, e.g. at
+`~researcher/galaxy-fuse.py`. It is *not* called as part of the setup process by `run_all.sh`.
+
+To use this, you should log in as an ordinary user (e.g. `researcher`). You will
+need your Galaxy API key, found by logging into Galaxy and selecting the menu
+option User -> API Keys. You can mount your Galaxy Datasets using a command like
+
+    python galaxy-fuse.py galaxy_files <api-key> &
+
+This puts the galaxy-fuse process into the background. `galaxy_files` can be replaced
+by any desired mountpoint. After running the above command, Galaxy Datasets will
+appear as read-only files, organised by History, under the directory galaxy_files.
+
+Note that:
+* Galaxy Datasets will be read-only, since writing to them directly is not supported
+by the Galaxy API
+* Datasets with non-unique names will not work
+* History or Dataset names containing a slash (/) are escaped to '%-'
+
+galaxy-fuse was written by Dr David Powell and began life at
+https://github.com/drpowell/galaxy-fuse .

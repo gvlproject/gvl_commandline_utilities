@@ -46,8 +46,10 @@ echo "\n** Creating a symlink to Galaxy for "$username
 sudo su $username -c 'if [ ! -d ~/galaxy ]; then ln -s /mnt/galaxy/galaxy-app ~/galaxy; fi'
 
 # Get galaxy-fuse
-echo "\n** Getting galaxy-fuse"
-sudo su $username -c 'curl https://raw.githubusercontent.com/drpowell/galaxy-fuse/master/galaxy-fuse.py > ~/galaxy-fuse.py'
+echo "\n** Making copy of galaxy-fuse.py for "$username
+homedir=$(sudo su "$username" -c 'echo $HOME')
+sudo cp galaxy-fuse.py $homedir
+sudo chown $username":"$username $homedir"/galaxy-fuse.py"
 
 echo "\n*** Configuring ipython notebook server for "$username
 

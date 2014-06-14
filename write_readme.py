@@ -19,7 +19,7 @@ The following utilities should now be configured for user {username}:
 
 Galaxy-installed reference genomes, as well as genome indices created by Galaxy-installed
 tools, can be found via the symlink ~/galaxy_genomes . Unless configured otherwise, this
-directory tree will be mounted using a shared filesystem and therefore read-only.
+directory tree will be mounted using a shared filesystem and therefore be read-only.
 
 --
 
@@ -29,7 +29,7 @@ The Galaxy application directory can be found via the symlink ~/galaxy .
 
 Galaxy datasets can be mounted and read directly using the galaxy-fuse.py
 script in this directory. To do this you will need your Galaxy API key, found by
-logging into Galaxy at http//{ip-address}/ and selecting the menu option
+logging into Galaxy at http//{ip_address}/ and selecting the menu option
 User -> API Keys. You can mount your Galaxy datasets using a command like
 
     python galaxy-fuse.py galaxy_files <api-key> &

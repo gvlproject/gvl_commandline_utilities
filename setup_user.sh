@@ -56,9 +56,6 @@ sudo chown $username":"$username $homedir"/galaxy-fuse.py"
 
 echo "\n*** Configuring ipython notebook server for "$username
 
-# On older images, jinja2 is not installed - make sure it is
-sudo pip install jinja2
-
 # Configure ipython notebook server
 sudo su $username -c 'python setup_ipython_server.py'
 

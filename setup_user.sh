@@ -3,8 +3,9 @@
 # Currently these are
 #  - symlink to genomes directory
 #  - symlink to galaxy app directory
-#  - public_html directory with nginx forwarding (currently disabled)
+#  - public_html directory with nginx forwarding
 #  - configure an ipython notebook profile for secure access over the web
+#  - add script galaxy-fuse.py to use for direct access to Galaxy datasets
 #
 # Module files for toolshed tools are configured for all users, not here.
 
@@ -29,8 +30,11 @@ if [ $(getent group | grep rstudio_users | wc -l) != '0' ]; then
     sudo usermod -G rstudio_users $username
 fi
 
+# Add user to fuse
+sudo usermod -G fuse $username
+
 # Set up public_html redirect for user at http://ip-addr/public/us.
-# This is dependent on an already existing 
+# This is dependent on an already existing
 # /usr/nginx/conf/public_html.conf (which may be empty)
 # configured into NGINX using configure_nginx.sh
 echo "\n** Creating a public_html directory for user "$username
@@ -44,6 +48,12 @@ sudo su $username -c 'if [ ! -d ~/galaxy_genomes ]; then ln -s /mnt/galaxyIndice
 echo "\n** Creating a symlink to Galaxy for "$username
 sudo su $username -c 'if [ ! -d ~/galaxy ]; then ln -s /mnt/galaxy/galaxy-app ~/galaxy; fi'
 
+# Get galaxy-fuse
+echo "\n** Making copy of galaxy-fuse.py for "$username
+homedir=$(sudo su "$username" -c 'echo $HOME')
+sudo cp galaxy-fuse.py $homedir
+sudo chown $username":"$username $homedir"/galaxy-fuse.py"
+
 echo "\n*** Configuring ipython notebook server for "$username
 
 # On older images, jinja2 is not installed - make sure it is
@@ -55,4 +65,3 @@ sudo su $username -c 'python setup_ipython_server.py'
 # Write out user README file
 echo "\n*** Writing ~/README.txt for "$username" - please consult for setup details.\n"
 sudo su $username -c 'python write_readme.py'
-

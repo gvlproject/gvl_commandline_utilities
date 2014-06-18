@@ -11,7 +11,7 @@ To use, launch a GVL instance ( http://launch.genome.edu.au/ ), ssh in as user u
     cd gvl_commandline_utilities
     sh run_all.sh
 
-This version of gvl_commandline_utilities is intended to run on GVL image v2.19 or later.
+This version of gvl_commandline_utilities is intended to run on GVL image v2.20 or later.
 Some of the scripts are dependent on the correct config hooks being available in
 /usr/nginx/conf/nginx.conf .
 
@@ -19,6 +19,7 @@ The main scripts you are likely to want to run yourself are:
 * `run_all.sh` : configure your instance for command-line use and install services.
 * `setup_user.sh` : after running `run_all.sh`, can be run again to configure additional user accounts.
 * `toolshed_to_modules.py` : after running `run_all.sh`, can be run again to update module files. This is useful if tools have been added or removed using the Galaxy Toolshed.
+* `galaxy-fuse.py` : an ordinary user can run this script to set up access to their Galaxy Datasets, if they have a Galaxy account.
 
 ## How to use installed features
 
@@ -61,6 +62,19 @@ tools, can be accessed by command-line users via the symlink `~/galaxy_genomes` 
 Unless configured otherwise, this directory tree will be mounted using a shared filesystem and
 therefore read-only.
 
+**Galaxy Datasets** can be mounted for direct read access using the galaxy-fuse script,
+which can be found in your home directory at `~/galaxy-fuse.py`. You will need your Galaxy API key,
+found by logging into Galaxy and selecting the menu option User -> API Keys.
+To use, run
+
+    python galaxy-fuse.py galaxy_files <api-key> &
+
+This puts the galaxy-fuse process into the background. `galaxy_files` can be replaced
+by any desired mountpoint. After running the above command, Galaxy Datasets will
+appear as read-only files, organised by History, under the directory galaxy_files.
+
+See the notes on the `galaxy-fuse.py` script below for caveats.
+
 A per-user **web-accessible folder** can be found at `~/public_html` . Any files you place in this
 directory will be _publicly_ accessible at
 
@@ -72,6 +86,7 @@ to a URL as above, with `researcher` replaced by the relevant username.
 **RStudio** is accessible at
 
     http://<your-ip-address>/rstudio/
+
 
 You can log into RStudio with username "researcher" and the corresponding linux password.
 Any other linux accounts created by running `setup_user.sh` will similarly have RStudio accounts.
@@ -123,7 +138,7 @@ Consult http://www.genome.edu.au/ for further documentation on GVL instances.
 
 ### run_all.sh
 
-Run all other scripts with correct ordering and permissions.
+Run other scripts with correct ordering and permissions.
 
 Any utilities which need to be configured for all users will be configured.
 
@@ -184,9 +199,8 @@ Requires superuser permissions. Assumes that configure_nginx.sh has been run.
 Run all scripts below which apply to an individual user. This script can be run multiple
 times to create and configure multiple non-sudo user accounts.
 
-Currently it will create the account; create home-directory symlinks to reference genomes
-and to galaxy; create a public_html directory; and configure an ipython notebook profile
-to run securely over the web.
+It will create the user account, add it to appropriate groups, and configure symlinks
+and services, and set passwords.
 
 Usage:
 
@@ -220,3 +234,27 @@ Usage:
     sudo sh add_public_html.sh <username>
 
 Requires superuser permissions. Assumes that `configure_nginx.sh` has been run.
+
+### galaxy-fuse.py
+
+This script can be found in the home directory of each ordinary user, e.g. at
+`~researcher/galaxy-fuse.py`. It is *not* called as part of the setup process by `run_all.sh`.
+
+To use this, you should log in as an ordinary user (e.g. `researcher`). You will
+need your Galaxy API key, found by logging into Galaxy and selecting the menu
+option User -> API Keys. You can mount your Galaxy Datasets using a command like
+
+    python galaxy-fuse.py galaxy_files <api-key> &
+
+This puts the galaxy-fuse process into the background. `galaxy_files` can be replaced
+by any desired mountpoint. After running the above command, Galaxy Datasets will
+appear as read-only files, organised by History, under the directory galaxy_files.
+
+Note that:
+* Galaxy Datasets will be read-only, since writing to them directly is not supported
+by the Galaxy API
+* Datasets with non-unique names will not work
+* History or Dataset names containing a slash (/) are escaped to '%-'
+
+galaxy-fuse was written by Dr David Powell and began life at
+https://github.com/drpowell/galaxy-fuse .

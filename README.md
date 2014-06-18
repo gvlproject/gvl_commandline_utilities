@@ -32,7 +32,7 @@ just
     su researcher
     cd
 
-This will get to your home directory.
+This will get you to your home directory.
 
 You can then find documentation on most of the features described on this page by examining the
 README.txt file in your home directory:
@@ -42,13 +42,19 @@ README.txt file in your home directory:
 To access specific services, including those that come pre-installed on GVL instances:
 
 **CloudMan** is already installed, without running these scripts.
-It is accessible at `http://<your-ip-address>/cloud`
+It is accessible at
+
+    http://<your-ip-address>/cloud
 
 **VNC, for remote desktop access** is already installed, without running these scripts.
-It is accessible at `http://<your-ip-address>/vnc`
+It is accessible at
+
+    http://<your-ip-address>/vnc
 
 **Galaxy** is already installed, without running these scripts. The Galaxy application directory
-can be found via the symlink `~/galaxy`, and Galaxy is accessible at `http://<your-ip-address>/`
+can be found via the symlink `~/galaxy`, and Galaxy is accessible at
+
+    http://<your-ip-address>/
 
 **Galaxy-installed reference genomes**, as well as genome indices created by Galaxy-installed
 tools, can be accessed by command-line users via the symlink `~/galaxy_genomes` .
@@ -63,7 +69,7 @@ directory will be _publicly_ accessible at
 If you create extra user accounts using `setup_user.sh`, each account will get a similar folder which redirects
 to a URL as above, with `researcher` replaced by the relevant username.
 
-**RStudio** is available at
+**RStudio** is accessible at
 
     http://<your-ip-address>/rstudio/
 

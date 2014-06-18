@@ -80,35 +80,6 @@ c.NotebookApp.webapp_settings = {{'static_url_prefix':'{location}/static/'}}
 #c.NotebookApp.keyfile = u'{keyfile}'
 """
 
-instruction_text =\
-"""
-
-================================================================================
-ipython notebook is now configured to run as a server. To launch, change to your
-working directory and run
-
-    ipython notebook --profile=nbserver
-
-If you want the server to run while you are logged out, you may want
-to enter a screen session first by running `screen`. The next time you log in,
-you can reconnect to it using `screen -r`.
-
-To access the running ipython notebook, point your browser to:
-
-    https://{ip_address}:{port}/
-
-Note the https in the URL!
-You will need the password you entered during setup.
-Your connection will be encrypted. If you use the current default setup you will
-see a browser warning due to the self-signed certificate - this is expected.
-
-Anyone who knows the password to your notebook server will be able to execute
-arbitrary code on your server, so keep this password private. You should treat
-it as you would your ssh login credentials.
-================================================================================
-
-"""
-
 extension_javascript = \
 """
 require(["nbextensions/toc"], function (toc) {
@@ -169,11 +140,6 @@ def main():
                                       location = ipython_location,
                                       certfile = certfile,
                                       keyfile = keyfile))
-
-    # Get our IP address and tell the user what to do
-    ip_addr = cmd_output("ifconfig | grep -A 1 eth0 | grep inet | sed -nr 's/.*?addr:([0-9\\.]+).*/\\1/p'")
-    print instruction_text.format(ip_address = ip_addr, port = ipython_port)
-
 
 def cmd_output(command):
     """Run a shell command and get the standard output, ignoring stderr."""

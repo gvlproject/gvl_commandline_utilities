@@ -17,16 +17,21 @@ username=$1
 # Exit on any failure so we can troubleshoot
 set -e
 
-# Create the user
+# Create the user account
 echo "\n** Creating a non-sudo account for user "$username
-echo "Creating account for "$username
-sudo adduser --disabled-password --gecos "" $username --home "/mnt/galaxy/export/gvl_home_directories/"$username
-sudo ln -s "/mnt/galaxy/export/gvl_home_directories/"$username "/home/"$username
+if [ $(getent passwd $username | wc -l) = '0' ]; then
+  # User does not exist yet
+  echo "Creating account for "$username
+  sudo adduser --disabled-password --gecos "" $username --home "/mnt/galaxy/export/gvl_home_directories/"$username
+  sudo ln -s "/mnt/galaxy/export/gvl_home_directories/"$username "/home/"$username
+else
+  echo "User "$username" already exists, not creating."
+fi
 echo "Setting password for "$username
 sudo passwd $username
 
 # Add user to rstudio_users, if that group exists
-if [ $(getent group | grep rstudio_users | wc -l) != '0' ]; then
+if [ $(getent group rstudio_users | wc -l) != '0' ]; then
     sudo usermod -a -G rstudio_users $username
 fi
 

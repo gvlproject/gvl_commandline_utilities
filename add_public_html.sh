@@ -19,19 +19,17 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
-sudo su $username -c 'mkdir ~/public_html'
+# Create public_html directory if it does not exist
+
+sudo su $username -c 'if [ ! -e ~/public_html ]; then mkdir ~/public_html; fi'
 sudo su $username -c 'chmod 755 ~/public_html'
 
-# Check if this user already exists in conf file
+# Add redirect to nginx conf via public_html.conf
+# If redirect already exists, do nothing
 
-if [ $(grep $redirect $conf_file | wc -l) != '0' ]; then
-    echo "User "$username" appears to already have a redirect in "$conf_file"; aborting."
-    exit 1
-fi
-
-# Add redirect
-
-cat >> $conf_file << END
+if [ $(grep $redirect $conf_file | wc -l) = '0' ]; then
+    echo "Adding redirect to "$conf_file" for user "$username
+    cat >> $conf_file << END
 location $redirect {
      alias /home/$username/public_html/;
      expires 2h;
@@ -39,5 +37,9 @@ location $redirect {
      # autoindex on;
 }
 END
+else
+    echo "User "$username" appears to already have a redirect in "$conf_file"; not adding"
+fi
+
 
 /usr/nginx/sbin/nginx -s reload

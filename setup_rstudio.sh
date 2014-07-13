@@ -27,10 +27,12 @@ END
 
 echo "Configuring RStudio"
 
-# Configure RStudio to allow only rstudio_users accounts, 
+# Configure RStudio to allow only rstudio_users accounts,
 # which should not include superusers
 
-addgroup rstudio_users
+if [ $(getent group rstudio_users | wc -l) = '0' ]; then
+  addgroup rstudio_users
+fi
 
 cat > /etc/rstudio/rserver.conf << END
 auth-required-user-group=rstudio_users

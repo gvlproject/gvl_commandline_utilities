@@ -32,11 +32,16 @@ info="
 This instance has now been configured with a non-sudo account called researcher.
 You should use this account for non-admin tasks. 
 
-To get started straight away and find out about available resources, 
-run the following commands:
+To get started straight away, log out as user ubuntu and log back in as user
+researcher, and examine the README.txt file in your new home directory: 
 
-  su researcher
-  cd 
+  less README.txt
+
+Or, if you would like to use su right now rather than logging out, we suggest 
+the following as a workaround to allow you to use screen in your new account:
+
+  su - researcher
+  script /dev/null
   less README.txt
 
 ==================================================================================

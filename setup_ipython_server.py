@@ -122,7 +122,7 @@ def main():
 
     # Install the Table of Contents extension into this profile
     logging.info("Installing python notebook Table of Contents extension")
-    extension_dir = os.path.join(profile_dir, 'static', 'nbextensions')
+    extension_dir = os.path.join(ipython_dir, 'nbextensions')
     custom_dir = os.path.join(profile_dir, 'static', 'custom')
     run_cmd("mkdir -p "+extension_dir)
     run_cmd("curl -L https://rawgithub.com/minrk/ipython_extensions/master/nbextensions/toc.js > "+os.path.join(extension_dir,"toc.js"))

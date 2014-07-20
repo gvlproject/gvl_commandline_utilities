@@ -5,7 +5,7 @@ These scripts configure GVL instances as command-line bioinformatics platforms, 
 
 ## How to run these scripts
 
-To use, launch a GVL instance ( http://launch.genome.edu.au/ ), ssh in as user ubuntu, and run
+To use, launch a GVL instance ( http://tinyurl.com/getGVLguide ), ssh in as user ubuntu, and run
 
     git clone https://github.com/claresloggett/gvl_commandline_utilities
     cd gvl_commandline_utilities
@@ -27,13 +27,12 @@ Running `run_all.sh` will create a non-sudo account called "researcher", with va
 It is more secure and convenient to use the researcher account for ordinary research activities, but
 to carry out admin actions, you will need to use a sudoer account such as ubuntu.
 
-To access the below features, ssh in as user researcher, or if you are already logged in as ubuntu,
-just
+To access the below features, the best way is to log out of the ubuntu account and ssh in as user researcher. Alternatively if you are already logged in as ubuntu, you can run
 
-    su researcher
-    cd
+    su - researcher
+    script /dev/null
 
-This will get you to your home directory.
+(The script command will allow you to use screen after running su.)
 
 You can then find documentation on most of the features described on this page by examining the
 README.txt file in your home directory:
@@ -86,7 +85,6 @@ to a URL as above, with `researcher` replaced by the relevant username.
 **RStudio** is accessible at
 
     http://<your-ip-address>/rstudio/
-
 
 You can log into RStudio with username "researcher" and the corresponding linux password.
 Any other linux accounts created by running `setup_user.sh` will similarly have RStudio accounts.

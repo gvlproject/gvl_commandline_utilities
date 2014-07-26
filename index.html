@@ -40,7 +40,7 @@ These scripts configure GVL instances as command-line bioinformatics platforms, 
 <h2>
 <a name="how-to-run-these-scripts" class="anchor" href="#how-to-run-these-scripts"><span class="octicon octicon-link"></span></a>How to run these scripts</h2>
 
-<p>To use, launch a GVL instance ( <a href="http://launch.genome.edu.au/">http://launch.genome.edu.au/</a> ), ssh in as user ubuntu, and run</p>
+<p>To use, launch a GVL instance ( <a href="https://docs.google.com/document/d/1uYKWZckyR8kZSY6viECMJsGSTaNsS2nVMj5n_YYzxGY/pub">instructions here</a> ), ssh in as user ubuntu, and run</p>
 
 <pre><code>git clone https://github.com/claresloggett/gvl_commandline_utilities
 cd gvl_commandline_utilities
@@ -69,14 +69,13 @@ Some of the scripts are dependent on the correct config hooks being available in
 It is more secure and convenient to use the researcher account for ordinary research activities, but
 to carry out admin actions, you will need to use a sudoer account such as ubuntu.</p>
 
-<p>To access the below features, ssh in as user researcher, or if you are already logged in as ubuntu,
-just</p>
+<p>To access the below features, the best way is to log out of the ubuntu account and ssh in as user researcher. Alternatively if you are already logged in as ubuntu, you can run</p>
 
-<pre><code>su researcher
-cd
+<pre><code>su - researcher
+script /dev/null
 </code></pre>
 
-<p>This will get you to your home directory.</p>
+<p>(The script command will allow you to use screen after running su.)</p>
 
 <p>You can then find documentation on most of the features described on this page by examining the
 README.txt file in your home directory:</p>

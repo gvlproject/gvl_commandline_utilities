@@ -5,7 +5,7 @@ These scripts configure GVL instances as command-line bioinformatics platforms, 
 
 ## How to run these scripts
 
-To use, launch a GVL instance ( http://tinyurl.com/getGVLguide ), ssh in as user ubuntu, and run
+To use, launch a GVL instance ( [instructions here](https://docs.google.com/document/d/1uYKWZckyR8kZSY6viECMJsGSTaNsS2nVMj5n_YYzxGY/pub) ), ssh in as user ubuntu, and run
 
     git clone https://github.com/claresloggett/gvl_commandline_utilities
     cd gvl_commandline_utilities

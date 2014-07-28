@@ -104,7 +104,8 @@ def main():
 
     # Ask the user for a password; only store the hash
     logging.info("Configuring password")
-    print "Enter a password to use for ipython notebook web access:"
+    print "\nEnter a password to use for ipython notebook web access."
+    print "It is usually ok to use the same password as previously chosen for the linux account."
     password_hash = IPython.lib.passwd()
 
     # Generate a self-signed certificate

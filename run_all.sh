@@ -9,6 +9,21 @@
 # Exit on any failure so we can troubleshoot
 set -e
 
+introduction="
+These scripts will configure commandline utilities on this server.
+They will:
+  - create environment modules for Galaxy Toolshed tools
+  - install and configure RStudio Server
+  - configure IPython Notebook for secure web access
+  - set up public_html directories
+A new non-sudo account called 'researcher' will be created to use these utilities.
+"
+
+# Introduction
+echo "$introduction"
+echo "Press any key to continue (or Ctrl-C to abort):"
+read _input
+
 # Create modules from Galaxy Toolshed tools
 # NB use sudo -E so that sudo keeps the MODULE environment variables
 echo "\n*** Creating environment modules for Galaxy Toolshed tools"
@@ -30,14 +45,14 @@ info="
 ==================================================================================
 
 This instance has now been configured with a non-sudo account called researcher.
-You should use this account for non-admin tasks. 
+You should use this account for non-admin tasks.
 
 To get started straight away, log out as user ubuntu and log back in as user
-researcher, and examine the README.txt file in your new home directory: 
+researcher, and examine the README.txt file in your new home directory:
 
   less README.txt
 
-Or, if you would like to use su right now rather than logging out, we suggest 
+Or, if you would like to use su right now rather than logging out, we suggest
 the following as a workaround to allow you to use screen in your new account:
 
   su - researcher

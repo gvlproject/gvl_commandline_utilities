@@ -119,7 +119,7 @@ def main():
     # Note that this import will fail if the default(?) profile isn't created beforehand
     from IPython.external.mathjax import install_mathjax
     mathjax_dest = os.path.join(profile_dir, 'static', 'mathjax' )
-    install_mathjax(dest = mathjax_dest)
+    install_mathjax(tag="v2.2-latest", dest=mathjax_dest)
 
     # Install the Table of Contents extension into this profile
     logging.info("Installing python notebook Table of Contents extension")

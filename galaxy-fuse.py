@@ -77,8 +77,8 @@ def parse_name_with_id(fname):
 class Context(LoggingMixIn, Operations):
     'Prototype FUSE to galaxy histories'
 
-    def __init__(self, server_addr, api_key):
-        self.gi = galaxy.GalaxyInstance(url=server_addr, key=api_key)
+    def __init__(self, api_key):
+        self.gi = galaxy.GalaxyInstance(url='http://127.0.0.1:80', key=api_key)
         self.datasets_cache = {}
         self.histories_cache = {'time':None, 'contents':None}
 
@@ -230,14 +230,14 @@ class Context(LoggingMixIn, Operations):
 
 
 if __name__ == '__main__':
-    if len(argv) != 4:
-        print('usage: %s <mountpoint> <server> <your_api_key>' % argv[0])
+    if len(argv) != 3:
+        print('usage: %s <mountpoint> <your_api_key>' % argv[0])
         exit(1)
 
-    mountpoint, server, key = argv[1:4]
+    mountpoint, key = argv[1:3]
 
     # Create the directory if it does not exist
     if not os.path.exists(mountpoint):
         os.makedirs(mountpoint)
 
-    fuse = FUSE(Context(server, key), mountpoint, foreground=True, ro=True)
+    fuse = FUSE(Context(key), mountpoint, foreground=True, ro=True)

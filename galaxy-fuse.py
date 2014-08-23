@@ -65,6 +65,15 @@ def unesc_filename(fname):
 
     return re.sub(r'%(.)', unesc, fname)
 
+def parse_name_with_id(fname):
+    #1cd8e2f6b131e891
+    m = re.match(r"^(?P<name>.*)-(?P<id>[0-9a-f]{16})", fname)
+    if m is not None:
+        return (m.group('name'), m.group('id'))
+    else:
+        return (fname,'')
+
+
 class Context(LoggingMixIn, Operations):
     'Prototype FUSE to galaxy histories'
 
@@ -122,11 +131,17 @@ class Context(LoggingMixIn, Operations):
 
     # Find a specific history by name
     def _history(self,h_name):
-        h = filter(lambda x: x['name']==h_name, self._histories())
+        (fixed_name, hist_id) = parse_name_with_id(h_name)
+        h = filter(lambda x: x['name']==fixed_name, self._histories())
         if len(h)==0:
             raise FuseOSError(ENOENT)
         if len(h)>1:
-            print "Too many histories with that name"
+            h = filter(lambda x: x['id']==hist_id, self._histories())
+            if len(h)==0:
+                raise FuseOSError(ENOENT)
+            if len(h)>1:
+                print "Too many histories with identical names and IDs"
+            return h[0]
         return h[0]
 
     # Lookup all datasets in the specified history; cache
@@ -143,12 +158,18 @@ class Context(LoggingMixIn, Operations):
     def _dataset(self, kw):
         h = self._history(kw['h_name'])
         ds = self._datasets(h)
-        d = filter(lambda x: x['name']==kw['ds_name'], ds)
+        (d_name, d_id) = parse_name_with_id(kw['ds_name'])
+        d = filter(lambda x: x['name']==d_name, ds)
+
         if len(d)==0:
             raise FuseOSError(ENOENT)
         if len(d)>1:
-            print "Too many datasets with that name"
-            raise FuseOSError(ENOENT)
+            d = filter(lambda x: x['name']==d_name and x['id'] == d_id, ds)
+            if len(d)==0:
+                raise FuseOSError(ENOENT)
+            if len(d)>1:
+                print "Too many datasets with that name and ID"
+            return d[0]
         if 'file_name' not in d[0]:
             print "Unable to find file of dataset.  Have you set : expose_dataset_path = True"
             raise FuseOSError(ENOENT)
@@ -161,12 +182,39 @@ class Context(LoggingMixIn, Operations):
             return ['.', '..', 'histories']
         elif typ=='histories':
             hl = self._histories()
-            return ['.', '..'] + [esc_filename(h['name']) for h in hl]
+            # Count duplicates
+            hist_count = {}
+            for h in hl:
+                try:
+                    hist_count[h['name']] += 1
+                except:
+                    hist_count[h['name']] = 1
+            # Build up results manually
+            results = ['.', '..']
+            for h in hl:
+                if h['name'] in hist_count and hist_count[h['name']] > 1:
+                    results.append(esc_filename(h['name'] + '-' + h['id']))
+                else:
+                    results.append(esc_filename(h['name']))
+            return results
         elif typ=='datasets':
             h = self._history(kw['h_name'])
             ds = self._datasets(h)
             #print ds
-            return ['.', '..'] + [esc_filename(d['name']) for d in ds]
+            # Count duplicates
+            d_count = {}
+            for d in ds:
+                try:
+                    d_count[d['name']] += 1
+                except:
+                    d_count[d['name']] = 1
+            results = ['.', '..']
+            for d in ds:
+                if d['name'] in d_count and d_count[d['name']] > 1:
+                    results.append(esc_filename(d['name'] + '-' + d['id']))
+                else:
+                    results.append(esc_filename(d['name']))
+            return results
 
 
     # Disable unused operations:

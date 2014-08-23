@@ -251,7 +251,7 @@ appear as read-only files, organised by History, under the directory galaxy_file
 Note that:
 * Galaxy Datasets will be read-only, since writing to them directly is not supported
 by the Galaxy API
-* Datasets with non-unique names will not work
+* Datasets with non-unique names will have the Dataset ID appended to disambiguate them
 * History or Dataset names containing a slash (/) are escaped to '%-'
 
 galaxy-fuse was written by Dr David Powell and began life at

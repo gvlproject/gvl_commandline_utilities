@@ -7,7 +7,7 @@ To do this you will need your Galaxy API key, found by logging into Galaxy and
 selecting the menu option User -> API Keys. You can mount your Galaxy datasets
 using a command like
 
-    python galaxy-fuse.py galaxy_files <api-key> &
+    python galaxy-fuse.py <api-key> &
 
 This puts the galaxy-fuse process into the background. Galaxy Datasets will then
 appear as read-only files, organised by History, under the directory galaxy_files.
@@ -22,6 +22,7 @@ from sys import argv, exit
 import re
 import time
 import os
+import argparse
 
 from fuse import FUSE, FuseOSError, Operations, LoggingMixIn, fuse_get_context
 
@@ -216,7 +217,6 @@ class Context(LoggingMixIn, Operations):
                     results.append(esc_filename(d['name']))
             return results
 
-
     # Disable unused operations:
     access = None
     flush = None
@@ -230,14 +230,19 @@ class Context(LoggingMixIn, Operations):
 
 
 if __name__ == '__main__':
-    if len(argv) != 3:
-        print('usage: %s <mountpoint> <your_api_key>' % argv[0])
-        exit(1)
 
-    mountpoint, key = argv[1:3]
+    parser = argparse.ArgumentParser(description="Mount Galaxy Datasets for direct read access using FUSE.")
+    parser.add_argument("apikey",
+                        help="Galaxy API key for the account to read")
+    parser.add_argument("-m", "--mountpoint", default="galaxy_files",
+                        help="Directory under which to mount the Galaxy Datasets.")
+    args = parser.parse_args()
 
     # Create the directory if it does not exist
-    if not os.path.exists(mountpoint):
-        os.makedirs(mountpoint)
+    if not os.path.exists(args.mountpoint):
+        os.makedirs(args.mountpoint)
 
-    fuse = FUSE(Context(key), mountpoint, foreground=True, ro=True)
+    fuse = FUSE(Context(args.apikey),
+                args.mountpoint,
+                foreground=True,
+                ro=True)

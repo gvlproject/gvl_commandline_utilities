@@ -21,7 +21,7 @@ A new non-sudo account called 'researcher' will be created to use these utilitie
 
 # Introduction
 echo "$introduction"
-echo "Press any key to continue (or Ctrl-C to abort):"
+echo "Press enter to continue (or Ctrl-C to abort):"
 read _input
 
 # Create modules from Galaxy Toolshed tools

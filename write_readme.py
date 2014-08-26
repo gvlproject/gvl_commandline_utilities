@@ -32,10 +32,11 @@ script in this directory. To do this you will need your Galaxy API key, found by
 logging into Galaxy at http//{ip_address}/ and selecting the menu option
 User -> API Keys. You can mount your Galaxy datasets using a command like
 
-    python galaxy-fuse.py galaxy_files <api-key> &
+    python galaxy-fuse.py <api-key> &
 
 This puts the galaxy-fuse process into the background. Galaxy Datasets will then
-appear as read-only files, organised by History, under the directory galaxy_files.
+appear as read-only files, organised by History, by default under the directory
+galaxy_files.
 
 --
 

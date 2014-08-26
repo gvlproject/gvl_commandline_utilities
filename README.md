@@ -66,11 +66,11 @@ which can be found in your home directory at `~/galaxy-fuse.py`. You will need y
 found by logging into Galaxy and selecting the menu option User -> API Keys.
 To use, run
 
-    python galaxy-fuse.py galaxy_files <api-key> &
+    python galaxy-fuse.py <api-key> &
 
-This puts the galaxy-fuse process into the background. `galaxy_files` can be replaced
-by any desired mountpoint. After running the above command, Galaxy Datasets will
-appear as read-only files, organised by History, under the directory galaxy_files.
+This puts the galaxy-fuse process into the background. After running the above command,
+Galaxy Datasets will appear as read-only files, organised by History, by default under
+the directory `galaxy_files`.
 
 See the notes on the `galaxy-fuse.py` script below for caveats.
 
@@ -242,11 +242,11 @@ To use this, you should log in as an ordinary user (e.g. `researcher`). You will
 need your Galaxy API key, found by logging into Galaxy and selecting the menu
 option User -> API Keys. You can mount your Galaxy Datasets using a command like
 
-    python galaxy-fuse.py galaxy_files <api-key> &
+    python galaxy-fuse.py <api-key> &
 
-This puts the galaxy-fuse process into the background. `galaxy_files` can be replaced
-by any desired mountpoint. After running the above command, Galaxy Datasets will
-appear as read-only files, organised by History, under the directory galaxy_files.
+This puts the galaxy-fuse process into the background. After running the above command,
+Galaxy Datasets will appear as read-only files, organised by History, by default under
+the directory `galaxy_files`.
 
 Note that:
 * Galaxy Datasets will be read-only, since writing to them directly is not supported

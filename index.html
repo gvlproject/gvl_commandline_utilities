@@ -113,12 +113,12 @@ which can be found in your home directory at <code>~/galaxy-fuse.py</code>. You 
 found by logging into Galaxy and selecting the menu option User -&gt; API Keys.
 To use, run</p>
 
-<pre><code>python galaxy-fuse.py galaxy_files &lt;api-key&gt; &amp;
+<pre><code>python galaxy-fuse.py &lt;api-key&gt; &amp;
 </code></pre>
 
-<p>This puts the galaxy-fuse process into the background. <code>galaxy_files</code> can be replaced
-by any desired mountpoint. After running the above command, Galaxy Datasets will
-appear as read-only files, organised by History, under the directory galaxy_files.</p>
+<p>This puts the galaxy-fuse process into the background. After running the above command,
+Galaxy Datasets will appear as read-only files, organised by History, by default under
+the directory <code>galaxy_files</code>.</p>
 
 <p>See the notes on the <code>galaxy-fuse.py</code> script below for caveats.</p>
 
@@ -310,12 +310,12 @@ instances to be served up at different addresses or different ports.</p>
 need your Galaxy API key, found by logging into Galaxy and selecting the menu
 option User -&gt; API Keys. You can mount your Galaxy Datasets using a command like</p>
 
-<pre><code>python galaxy-fuse.py galaxy_files &lt;api-key&gt; &amp;
+<pre><code>python galaxy-fuse.py &lt;api-key&gt; &amp;
 </code></pre>
 
-<p>This puts the galaxy-fuse process into the background. <code>galaxy_files</code> can be replaced
-by any desired mountpoint. After running the above command, Galaxy Datasets will
-appear as read-only files, organised by History, under the directory galaxy_files.</p>
+<p>This puts the galaxy-fuse process into the background. After running the above command,
+Galaxy Datasets will appear as read-only files, organised by History, by default under
+the directory <code>galaxy_files</code>.</p>
 
 <p>Note that:</p>
 

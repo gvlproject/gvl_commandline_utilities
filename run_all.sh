@@ -37,6 +37,13 @@ sudo sh configure_nginx.sh
 echo "\n*** Installing RStudio and configuring for non-sudo users"
 sudo sh setup_rstudio.sh
 
+# Install python swift packages
+echo "\n*** Installing Python Swift API client"
+sudo apt-get install libxslt-dev
+sudo pip install lxml
+sudo pip install python-keystoneclient
+sudo pip install python-swiftclient
+
 # Add the default non-sudo account 'researcher'
 sh setup_user.sh researcher
 

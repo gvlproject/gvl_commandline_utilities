@@ -33,8 +33,9 @@ if [ $(grep $redirect $conf_file | wc -l) = '0' ]; then
 location $redirect {
      alias /home/$username/public_html/;
      expires 2h;
-     # Uncomment the following line to allow public browsing of public_html directory contents
-     # autoindex on;
+     # Comment out the following line to disallow browsing of public_html directory contents
+     # while still allowing access to files
+     autoindex on;
 }
 END
 else

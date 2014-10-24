@@ -66,7 +66,7 @@ c.NotebookApp.webapp_settings = {{'static_url_prefix':'{location}/static/'}}
 
 # Above, we do not set c.NotebookApp.ip, so by default Notebook will only
 # listen on localhost. We are relying on NGINX port forwarding.
-# We also do not set up encryption, as NGINX will do this for us.
+# We also do not set up encryption - can be optionally configured via NGINX.
 # If you want to use open ports directly instead, we have created self-signed
 # certificates for convenience. Comment out the subdirectory config above and uncomment
 # the following lines:
@@ -115,9 +115,9 @@ def main(ipython_password=None):
 
     # Install MathJax locally (into this profile)
     # Note that this import will fail if the default(?) profile isn't created beforehand
-    from IPython.external.mathjax import install_mathjax
-    mathjax_dest = os.path.join(profile_dir, 'static', 'mathjax' )
-    install_mathjax(tag="v2.2-latest", dest=mathjax_dest)
+    #from IPython.external.mathjax import install_mathjax
+    #mathjax_dest = os.path.join(profile_dir, 'static', 'mathjax' )
+    #install_mathjax(tag="v2.2-latest", dest=mathjax_dest)
 
     # Install the Table of Contents extension into this profile
     logging.info("Installing python notebook Table of Contents extension")

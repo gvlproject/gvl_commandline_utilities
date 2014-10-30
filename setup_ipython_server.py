@@ -31,6 +31,9 @@ import IPython.lib
 import logging
 import subprocess
 import stat
+import argparse
+import random
+import string
 
 profile_name = "nbserver"
 ipython_port =  9510
@@ -88,7 +91,7 @@ require(["nbextensions/toc"], function (toc) {
 });
 """
 
-def main():
+def main(system_password):
     """ The body of the script. """
 
     # Initialise logging to print info to screen
@@ -104,9 +107,12 @@ def main():
 
     # Ask the user for a password; only store the hash
     logging.info("Configuring password")
-    print "\nEnter a password to use for ipython notebook web access."
-    print "It is usually ok to use the same password as previously chosen for the linux account."
-    password_hash = IPython.lib.passwd()
+    if not system_password:
+        print "\nEnter a password to use for ipython notebook web access."
+        print "It is usually ok to use the same password as previously chosen for the linux account."
+        password_hash = IPython.lib.passwd()
+    else:
+        password_hash = system_password_to_hash(system_password)
 
     # Generate a self-signed certificate
     logging.info("Generating self-signed certificate for SSL encryption")
@@ -151,5 +157,32 @@ def run_cmd(command):
     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     return process.communicate()
 
+def system_password_to_hash(password):
+    """Accepts a password in /etc/shadow format and returns the hashlib equivalent"""
+    fragments = password.split(":")
+        
+    if fragments[1] == "1":
+        algorithm = "md5"
+    elif fragments[1] == "5":
+        algorithm = "sha256"
+    elif fragments[1] == "6":
+        algorithm = "sha512"
+    else:
+        raise Exception("Unrecognised password format...")
+    
+    return "{0}:{1}:{2}".format(algorithm, fragments[2], fragments[3]) 
+
+def id_generator(size=8, chars=string.ascii_uppercase + string.digits):
+    """ Generates a random password """
+    return ''.join(random.choice(chars) for _ in range(size))
+
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-s", "--silent", action='store_true', default=False, help="Whether to run in silent install mode")
+    parser.add_argument("-p", "--syspassword", default=None, help="System password from /etc/shadow. Used only in silent mode.")
+    args = parser.parse_args()
+    
+    if args.silent and not args.syspassword:
+        args.syspassword = id_generator()
+    
+    main(args.syspassword)

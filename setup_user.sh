@@ -15,6 +15,18 @@
 # Exit on any failure so we can troubleshoot
 set -e
 
+silent_mode=false
+
+# Parse command line arguments
+while getopts ":s" opt; do
+  case $opt in
+    s)
+       silent_mode=true
+      ;;
+  esac
+done
+shift $(($OPTIND-1))
+
 username=$1
 
 introduction="
@@ -41,8 +53,16 @@ if [ $(getent passwd $username | wc -l) = '0' ]; then
 else
   echo "User "$username" already exists, not creating."
 fi
+
 echo "Setting password for "$username
-sudo passwd $username
+# get salted+hashed password for ubuntu user
+ubuntu_password=`sudo getent shadow | grep ubuntu: | awk -F":" '{ print $2 }'`
+if [ "$silent_mode" = true ] ; then
+   # replace new user's password with ubuntu user's password
+   echo $username:$ubuntu_password | sudo chpasswd -e
+else
+   sudo passwd $username
+fi
 
 echo "\n** Adding "$username" to appropriate groups"
 
@@ -78,7 +98,12 @@ sudo chown $username":"$username $homedir"/galaxy-fuse.py"
 echo "\n** Configuring ipython notebook server for "$username
 
 # Configure ipython notebook server
-sudo su $username -c 'python setup_ipython_server.py'
+if [ "$silent_mode" = true ] ; then
+   escaped_password="$(echo $ubuntu_password | sed -r 's/\$/:/g')"
+   sudo su $username -c 'python setup_ipython_server.py -s -p "'$escaped_password'"'
+else
+   sudo su $username -c 'python setup_ipython_server.py'
+fi
 
 # Write out user README file
 echo "\n** Writing ~/README.txt for "$username" - please consult for setup details.\n"

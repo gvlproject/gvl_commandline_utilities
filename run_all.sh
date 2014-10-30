@@ -9,6 +9,18 @@
 # Exit on any failure so we can troubleshoot
 set -e
 
+silent_mode=false
+
+# Parse command line arguments
+while getopts ":s" opt; do
+  case $opt in
+    s)
+       silent_mode=true
+      ;;
+  esac
+done
+shift $(($OPTIND-1))
+
 introduction="
 These scripts will configure commandline utilities on this server.
 They will:
@@ -21,8 +33,10 @@ A new non-sudo account called 'researcher' will be created to use these utilitie
 
 # Introduction
 echo "$introduction"
-echo "Press enter to continue (or Ctrl-C to abort):"
-read _input
+if [ "$silent_mode" = false ] ; then
+   echo "Press enter to continue (or Ctrl-C to abort):"
+   read _input
+fi
 
 # Create modules from Galaxy Toolshed tools
 # NB use sudo -E so that sudo keeps the MODULE environment variables
@@ -38,7 +52,12 @@ echo "\n*** Installing RStudio and configuring for non-sudo users"
 sudo sh setup_rstudio.sh
 
 # Add the default non-sudo account 'researcher'
-sh setup_user.sh researcher
+if [ "$silent_mode" = true ] ; then
+   sh setup_user.sh -s researcher
+else
+   sh setup_user.sh researcher
+fi
+
 
 # Print out getting-started info
 info="

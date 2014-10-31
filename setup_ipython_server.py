@@ -163,10 +163,10 @@ def get_cloudman_password():
             data = yaml.load(data_file)
             return data['password']
     else:
-        return id_generator()
+        return password_generator()
      
 
-def id_generator(size=8, chars=string.ascii_uppercase + string.digits):
+def password_generator(size=8, chars=string.ascii_uppercase + string.digits):
     """ Generates a random password """
     return ''.join(random.choice(chars) for _ in range(size))
 

@@ -99,8 +99,7 @@ echo "\n** Configuring ipython notebook server for "$username
 
 # Configure ipython notebook server
 if [ "$silent_mode" = true ] ; then
-   escaped_password="$(echo $ubuntu_password | sed -r 's/\$/:/g')"
-   sudo su $username -c 'python setup_ipython_server.py -s -p "'$escaped_password'"'
+   sudo su $username -c 'python setup_ipython_server.py -s
 else
    sudo su $username -c 'python setup_ipython_server.py'
 fi

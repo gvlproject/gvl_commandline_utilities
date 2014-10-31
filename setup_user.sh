@@ -99,7 +99,7 @@ echo "\n** Configuring ipython notebook server for "$username
 
 # Configure ipython notebook server
 if [ "$silent_mode" = true ] ; then
-   sudo su $username -c 'python setup_ipython_server.py -s
+   sudo su $username -c 'python setup_ipython_server.py -s'
 else
    sudo su $username -c 'python setup_ipython_server.py'
 fi

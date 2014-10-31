@@ -91,7 +91,7 @@ require(["nbextensions/toc"], function (toc) {
 });
 """
 
-def main(system_password):
+def main(ipython_password):
     """ The body of the script. """
 
     # Initialise logging to print info to screen
@@ -107,12 +107,10 @@ def main(system_password):
 
     # Ask the user for a password; only store the hash
     logging.info("Configuring password")
-    if not system_password:
+    if not ipython_password:
         print "\nEnter a password to use for ipython notebook web access."
         print "It is usually ok to use the same password as previously chosen for the linux account."
-        password_hash = IPython.lib.passwd()
-    else:
-        password_hash = system_password_to_hash(system_password)
+    password_hash = IPython.lib.passwd(passphrase=ipython_password)
 
     # Generate a self-signed certificate
     logging.info("Generating self-signed certificate for SSL encryption")
@@ -157,20 +155,16 @@ def run_cmd(command):
     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     return process.communicate()
 
-def system_password_to_hash(password):
-    """Accepts a password in /etc/shadow format and returns the hashlib equivalent"""
-    fragments = password.split(":")
-        
-    if fragments[1] == "1":
-        algorithm = "md5"
-    elif fragments[1] == "5":
-        algorithm = "sha256"
-    elif fragments[1] == "6":
-        algorithm = "sha512"
+def get_cloudman_password():
+    """Retrieve's the password for cloudman"""
+    if os.path.exists('/tmp/cm/userData.yaml'):
+        with open("/tmp/cm/userData.yaml", 'r') as data_file:
+            import yaml
+            data = yaml.load(data_file)
+            return data['password']
     else:
-        raise Exception("Unrecognised password format...")
-    
-    return "{0}:{1}:{2}".format(algorithm, fragments[2], fragments[3]) 
+        return id_generator()
+     
 
 def id_generator(size=8, chars=string.ascii_uppercase + string.digits):
     """ Generates a random password """
@@ -179,10 +173,9 @@ def id_generator(size=8, chars=string.ascii_uppercase + string.digits):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-s", "--silent", action='store_true', default=False, help="Whether to run in silent install mode")
-    parser.add_argument("-p", "--syspassword", default=None, help="System password from /etc/shadow. Used only in silent mode.")
     args = parser.parse_args()
     
-    if args.silent and not args.syspassword:
-        args.syspassword = id_generator()
+    if args.silent:
+        ipython_password = get_cloudman_password()
     
-    main(args.syspassword)
+    main(ipython_password)

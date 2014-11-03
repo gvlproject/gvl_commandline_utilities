@@ -46,14 +46,6 @@ profile_config = \
 
 c = get_config()
 
-# plotting support by default
-c.IPKernelApp.pylab = 'inline'
-
-# rmagic extension by default
-c.InteractiveShellApp.extensions = [
-    'rmagic'
-]
-
 # Do not open local browser, just run as a server
 c.NotebookApp.open_browser = False
 

@@ -31,6 +31,9 @@ import IPython.lib
 import logging
 import subprocess
 import stat
+import argparse
+import random
+import string
 
 profile_name = "nbserver"
 ipython_port =  9510
@@ -88,7 +91,7 @@ require(["nbextensions/toc"], function (toc) {
 });
 """
 
-def main():
+def main(ipython_password):
     """ The body of the script. """
 
     # Initialise logging to print info to screen
@@ -104,9 +107,10 @@ def main():
 
     # Ask the user for a password; only store the hash
     logging.info("Configuring password")
-    print "\nEnter a password to use for ipython notebook web access."
-    print "It is usually ok to use the same password as previously chosen for the linux account."
-    password_hash = IPython.lib.passwd()
+    if not ipython_password:
+        print "\nEnter a password to use for ipython notebook web access."
+        print "It is usually ok to use the same password as previously chosen for the linux account."
+    password_hash = IPython.lib.passwd(passphrase=ipython_password)
 
     # Generate a self-signed certificate
     logging.info("Generating self-signed certificate for SSL encryption")
@@ -151,5 +155,27 @@ def run_cmd(command):
     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     return process.communicate()
 
+def get_cloudman_password():
+    """Retrieve's the password for cloudman"""
+    if os.path.exists('/tmp/cm/userData.yaml'):
+        with open("/tmp/cm/userData.yaml", 'r') as data_file:
+            import yaml
+            data = yaml.load(data_file)
+            return data['password']
+    else:
+        return password_generator()
+     
+
+def password_generator(size=8, chars=string.ascii_uppercase + string.digits):
+    """ Generates a random password """
+    return ''.join(random.choice(chars) for _ in range(size))
+
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-s", "--silent", action='store_true', default=False, help="Whether to run in silent install mode")
+    args = parser.parse_args()
+    
+    if args.silent:
+        ipython_password = get_cloudman_password()
+    
+    main(ipython_password)

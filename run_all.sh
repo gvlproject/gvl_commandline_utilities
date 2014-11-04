@@ -21,11 +21,6 @@ while getopts ":s" opt; do
 done
 shift $(($OPTIND-1))
 
-if [ "$silent_mode" = true ] && [ $(getent passwd 'researcher' | wc -l) = '1' ]; then
-   echo "gvl_commandline_utilities already installed, skipping silent install."
-   exit 0
-fi
-
 introduction="
 These scripts will configure commandline utilities on this server.
 They will:

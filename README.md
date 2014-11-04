@@ -101,12 +101,9 @@ you can reconnect to it using `screen -r`.
 
 To access the running ipython notebook, point your browser to:
 
-    https://<your-ip-address>/ipython/
+    http://<your-ip-address>/ipython/
 
-Note the https in the URL!
 You will need the password you entered during setup.
-Your connection will be encrypted. If you use the current default setup you will
-see a browser warning due to the self-signed certificate - this is expected.
 
 Anyone who knows the password to your notebook server will be able to execute
 arbitrary code under your account, so keep this password private. You should treat
@@ -171,8 +168,8 @@ Set up NGINX config file structure necessary to configure RStudio, public_html, 
 IPython Notebook.
 
 This script is intended to run on GVL image v2.19 or later. It assumes that the
-placeholder config files commandline_utilities_http.conf and
-commandline_utilities_https.conf have been configured into /usr/nginx/conf/nginx.conf .
+placeholder config file commandline_utilities_http.conf has been configured
+into /usr/nginx/conf/nginx.conf .
 
 Usage:
 
@@ -207,7 +204,7 @@ Usage:
 ### setup_ipython_server.py
 
 Configure an ipython notebook profile to run the ipython notebook server including
-password-protection and SSL encryption. The notebook server, when running, will be
+password-protection. The notebook server, when running, will be
 available at `http://<your-ip-address>/ipython/`
 
 This script does not require sudo and can be run by an individual user to configure

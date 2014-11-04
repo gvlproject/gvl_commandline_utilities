@@ -26,7 +26,7 @@ These scripts will configure commandline utilities on this server.
 They will:
   - create environment modules for Galaxy Toolshed tools
   - install and configure RStudio Server
-  - configure IPython Notebook for secure web access
+  - configure IPython Notebook for web access
   - set up public_html directories
 A new non-sudo account called 'researcher' will be created to use these utilities.
 "

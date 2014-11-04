@@ -91,7 +91,7 @@ require(["nbextensions/toc"], function (toc) {
 });
 """
 
-def main(ipython_password):
+def main(ipython_password=None):
     """ The body of the script. """
 
     # Initialise logging to print info to screen
@@ -107,10 +107,12 @@ def main(ipython_password):
 
     # Ask the user for a password; only store the hash
     logging.info("Configuring password")
-    if not ipython_password:
+    if ipython_password is not None:
+        password_hash = IPython.lib.passwd(passphrase=ipython_password)
+    else:
         print "\nEnter a password to use for ipython notebook web access."
         print "It is usually ok to use the same password as previously chosen for the linux account."
-    password_hash = IPython.lib.passwd(passphrase=ipython_password)
+        password_hash = IPython.lib.passwd()
 
     # Generate a self-signed certificate
     logging.info("Generating self-signed certificate for SSL encryption")
@@ -164,7 +166,7 @@ def get_cloudman_password():
             return data['password']
     else:
         return password_generator()
-     
+
 
 def password_generator(size=8, chars=string.ascii_uppercase + string.digits):
     """ Generates a random password """
@@ -174,8 +176,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-s", "--silent", action='store_true', default=False, help="Whether to run in silent install mode")
     args = parser.parse_args()
-    
+
     if args.silent:
         ipython_password = get_cloudman_password()
-    
+    else:
+        ipython_password = None
+
     main(ipython_password)

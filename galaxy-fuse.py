@@ -79,7 +79,7 @@ class Context(LoggingMixIn, Operations):
     'Prototype FUSE to galaxy histories'
 
     def __init__(self, api_key):
-        self.gi = galaxy.GalaxyInstance(url='http://127.0.0.1:80', key=api_key)
+        self.gi = galaxy.GalaxyInstance(url='http://127.0.0.1:80/galaxy/', key=api_key)
         self.datasets_cache = {}
         self.histories_cache = {'time':None, 'contents':None}
 

@@ -51,6 +51,10 @@ sudo sh configure_nginx.sh
 echo "\n*** Installing RStudio and configuring for non-sudo users"
 sudo sh setup_rstudio.sh
 
+# Install IPython Notebook, if not installed
+sudo apt-get update
+sudo apt-get -y install ipython-notebook python-matplotlib
+
 # Add the default non-sudo account 'researcher'
 if [ "$silent_mode" = true ] ; then
    sh setup_user.sh -s researcher

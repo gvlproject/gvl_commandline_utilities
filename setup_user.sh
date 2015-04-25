@@ -76,7 +76,7 @@ sudo usermod -a -G fuse $username
 
 # Set up public_html redirect for user at http://ip-addr/public/us.
 # This is dependent on an already existing
-# /usr/nginx/conf/public_html.conf (which may be empty)
+# /etc/conf/public_html.conf (which may be empty)
 # configured into NGINX using configure_nginx.sh
 echo "\n** Creating a public_html directory for user "$username
 sudo sh add_public_html.sh $username

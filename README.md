@@ -13,7 +13,7 @@ To use, launch a GVL instance ( [instructions here](https://docs.google.com/docu
 
 This version of gvl_commandline_utilities is intended to run on GVL image v2.20 or later.
 Some of the scripts are dependent on the correct config hooks being available in
-/usr/nginx/conf/nginx.conf .
+/etc/nginx/nginx.conf .
 
 The main scripts you are likely to want to run yourself are:
 * `run_all.sh` : configure your instance for command-line use and install services.
@@ -169,7 +169,7 @@ IPython Notebook.
 
 This script is intended to run on GVL image v2.19 or later. It assumes that the
 placeholder config file commandline_utilities_http.conf has been configured
-into /usr/nginx/conf/nginx.conf .
+into /etc/nginx/nginx.conf .
 
 Usage:
 

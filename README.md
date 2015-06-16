@@ -11,7 +11,7 @@ To use, launch a GVL instance ( [instructions here](https://docs.google.com/docu
     cd gvl_commandline_utilities
     sh run_all.sh
 
-This version of gvl_commandline_utilities is intended to run on GVL image v2.20 or later.
+This version of gvl_commandline_utilities is intended to run on GVL image 4.0 or later.
 Some of the scripts are dependent on the correct config hooks being available in
 /etc/nginx/nginx.conf .
 

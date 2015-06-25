@@ -55,6 +55,9 @@ sudo sh setup_rstudio.sh
 sudo apt-get update
 sudo apt-get -y install ipython-notebook python-matplotlib
 
+# Install bioblend
+sudo pip install bioblend
+
 # Add the default non-sudo account 'researcher'
 if [ "$silent_mode" = true ] ; then
    sh setup_user.sh -s researcher

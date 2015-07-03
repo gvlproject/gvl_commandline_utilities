@@ -48,8 +48,8 @@ echo "\n** Creating a non-sudo account for user "$username
 if [ $(getent passwd $username | wc -l) = '0' ]; then
   # User does not exist yet
   echo "Creating account for "$username
-  sudo adduser --disabled-password --gecos "" $username --home "/mnt/galaxy/export/gvl_home_directories/"$username
-  sudo ln -s "/mnt/galaxy/export/gvl_home_directories/"$username "/home/"$username
+  sudo adduser --disabled-password --gecos "" $username --home "/mnt/gvl/home/"$username
+  sudo ln -s "/mnt/gvl/home/"$username "/home/"$username
 else
   echo "User "$username" already exists, not creating."
 fi

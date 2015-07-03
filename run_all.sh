@@ -55,8 +55,9 @@ sudo sh setup_rstudio.sh
 sudo apt-get update
 sudo apt-get -y install ipython-notebook python-matplotlib
 
-# Install bioblend
+# Make sure bioblend and fuse are installed
 sudo pip install bioblend
+sudo pip install fusepy
 
 # Add the default non-sudo account 'researcher'
 if [ "$silent_mode" = true ] ; then

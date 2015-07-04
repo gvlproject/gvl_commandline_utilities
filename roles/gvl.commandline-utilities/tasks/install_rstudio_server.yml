@@ -1,0 +1,31 @@
+- name: Make sure RStudio package dependencies installed
+  apt: name="{{ item }}" state=present
+  with_items:
+      - gdebi-core
+      - libapparmor1
+
+- name: Download RStudio Server package
+  get_url: url="{{ rstudio_package_url }}" dest="{{ rstudio_local_tmp_package }}"
+
+- name: Install RStudio Server package
+  apt: deb="{{ rstudio_local_tmp_package }}"
+
+- name: Clean up RStudio Server package file
+  file: path="{{ rstudio_local_tmp_package }}" state=absent
+
+- name: Create RStudio Server NGINX redirect
+  copy: src=rstudio.locations dest="{{ nginx_sites_dir }}"
+
+- name: Restart NGINX
+  service: name=nginx state=reloaded
+
+- name: RStudio users - Create RStudio user group
+  group: name=rstudio_users state=present
+
+# Should perhaps preserve existing conf, but there should be none on new install
+- name: Demand that users be members of rstudio_users group
+  copy: src=rserver.conf dest=/etc/rstudio/
+
+- name: Restart RStudio Server
+  service: name=rstudio-server state=restarted
+  sudo_user: root   # not clear why this is needed

@@ -1,0 +1,11 @@
+
+# First attempt at ansible playbook version of these scripts
+
+# Usage: ansible-playbook ansible_test.yml
+
+- hosts: localhost  # prob unneeded since local
+  connection: local
+  sudo: yes
+  sudo_user: ubuntu
+  roles:
+      - gvl.commandline-utilities

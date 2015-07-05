@@ -1,1 +1,3 @@
+- include: install_libraries.yml
+
 - include: install_rstudio_server.yml

@@ -9,12 +9,16 @@
 
 - name: Install RStudio Server package
   apt: deb="{{ rstudio_local_tmp_package }}"
+  sudo: yes
+  sudo_user: root
 
 - name: Clean up RStudio Server package file
   file: path="{{ rstudio_local_tmp_package }}" state=absent
 
 - name: Create RStudio Server NGINX redirect
   copy: src=rstudio.locations dest="{{ nginx_sites_dir }}"
+  sudo: yes
+  sudo_user: root
 
 - name: Restart NGINX
   service: name=nginx state=reloaded
@@ -25,6 +29,8 @@
 # Should perhaps preserve existing conf, but there should be none on new install
 - name: Demand that users be members of rstudio_users group
   copy: src=rserver.conf dest=/etc/rstudio/
+  sudo: yes
+  sudo_user: root
 
 - name: Restart RStudio Server
   service: name=rstudio-server state=restarted

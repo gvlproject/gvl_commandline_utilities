@@ -1,10 +1,11 @@
+#!/usr/bin/env python
 
 """
-Given a Galaxy tools directory, look for env.sh files and use the directory 
-structure and the PATH settings to build module files. These env.sh files are 
+Given a Galaxy tools directory, look for env.sh files and use the directory
+structure and the PATH settings to build module files. These env.sh files are
 usually created by the Galaxy Toolshed.
-Any old module files with a whatis string indicating they were created by this 
-script will be removed before creating the new files, so that tools deleted from 
+Any old module files with a whatis string indicating they were created by this
+script will be removed before creating the new files, so that tools deleted from
 the Toolshed will be cleaned up.
 """
 
@@ -25,8 +26,8 @@ logging.basicConfig(level=logging.INFO)
 
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--tools_dir', default='/mnt/galaxy/tools', help='directory in which Galaxy Toolshed tools are installed')
-parser.add_argument('--modules_dir', default=None, help='destination directory in which to create module files') 
-parser.add_argument('--force', action='store_true', help="do not ask for confirmation before deleting old files.")                                                                             
+parser.add_argument('--modules_dir', default=None, help='destination directory in which to create module files')
+parser.add_argument('--force', action='store_true', help="do not ask for confirmation before deleting old files.")
 args = parser.parse_args()
 
 if args.modules_dir is None:
@@ -88,7 +89,7 @@ for ((tool_name, tool_version), dirs) in tool_shells.iteritems():
         logging.debug("Parsing "+env_path)
         with open(env_path) as f:
             for row in f:
-                # if this script is an if-fi block that just sources another env.sh script, 
+                # if this script is an if-fi block that just sources another env.sh script,
                 #  ignore this whole row
                 ifmatch = re.match("^if.*\;\s*then\s+\.\s+.*env\.sh\s*\;\s*fi$", row.strip())
                 if ifmatch:
@@ -104,7 +105,7 @@ for ((tool_name, tool_version), dirs) in tool_shells.iteritems():
                     if envmatch:
                         variable = envmatch.group(1).strip()
                         parts = [x.strip() for x in envmatch.group(2).split(':')]
-                        # Drop any empty strings 
+                        # Drop any empty strings
                         parts = [x for x in parts if x != '']
                         logging.debug("Parsed variable: "+str(variable)+", list "+str(parts))
                         # We have to translate to modulefiles.
@@ -122,16 +123,16 @@ for ((tool_name, tool_version), dirs) in tool_shells.iteritems():
                                                                         ':'.join(parts[1:])))
                         elif bashvar == parts[-1]:
                             module_lines.append("prepend-path  {0}  {1}\n".format(variable,
-                                                                        ':'.join(parts[:-1])))  
+                                                                        ':'.join(parts[:-1])))
                         else:
                             logging.warn("Line for environment variable {0} could not be "\
-                                    "parsed in {1}".format(variable, env_path))     
+                                    "parsed in {1}".format(variable, env_path))
                     elif exportmatch:
                         # An export statement; ignore
                         pass
                     elif len(line.strip())==0:
                         # An empty line; ignore
-                        pass                              
+                        pass
                     else:
                         # No regex match at all, we don't know what this is
                         logging.warn("Some lines could not be parsed in "+env_path)
@@ -155,6 +156,3 @@ for ((tool_name, tool_version), dirs) in tool_shells.iteritems():
     f.close()
 
 #TODO it would be nice to grab some extra module-whatis information and inter-module dependencies from the xml files
-
-
-

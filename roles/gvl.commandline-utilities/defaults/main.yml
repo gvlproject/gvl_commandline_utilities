@@ -7,4 +7,7 @@ rstudio_local_tmp_package: /tmp/rstudio-server.deb
 
 modules_home: /usr/share/modules
 
+ipython_location: /ipython/
+ipython_port: 9510
+
 default_new_user: researcher

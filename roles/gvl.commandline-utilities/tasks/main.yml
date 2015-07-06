@@ -3,3 +3,6 @@
 - include: create_toolshed_modules.yml
 
 - include: install_rstudio_server.yml
+
+# possibly should be done (repeatedly) in user setup
+- include: ipython_nginx.yml

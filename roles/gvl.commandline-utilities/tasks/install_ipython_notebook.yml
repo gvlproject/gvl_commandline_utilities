@@ -1,0 +1,18 @@
+- name: Make sure apt up to date
+  apt: update_cache=yes
+  sudo_user: root
+
+- name: Make sure IPython Notebook installed
+  apt: name=ipython-notebook
+  sudo_user: root
+
+- name: Make sure Python matplotlib installed
+  apt: name=python-matplotlib
+  sudo_user: root
+
+- name: Set up IPython Notebook NGINX redirect
+  template: src=ipython.locations dest="{{ nginx_sites_dir }}"
+  sudo_user: root
+
+- name: Restart NGINX
+  service: name=nginx state=reloaded

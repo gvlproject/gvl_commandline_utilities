@@ -5,4 +5,4 @@
 - include: install_rstudio_server.yml
 
 # possibly should be done (repeatedly) in user setup
-- include: ipython_nginx.yml
+- include: install_ipython_notebook.yml

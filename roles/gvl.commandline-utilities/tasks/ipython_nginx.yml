@@ -1,6 +1,0 @@
-- name: Set up IPython Notebook NGINX redirect
-  template: src=ipython.locations dest="{{ nginx_sites_dir }}"
-  sudo_user: root
-
-- name: Restart NGINX
-  service: name=nginx state=reloaded

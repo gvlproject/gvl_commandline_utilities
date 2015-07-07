@@ -6,6 +6,6 @@
 - hosts: localhost  # prob unneeded since local
   connection: local
   sudo: yes
-  sudo_user: ubuntu
+  sudo_user: root
   roles:
       - gvl.commandline-utilities

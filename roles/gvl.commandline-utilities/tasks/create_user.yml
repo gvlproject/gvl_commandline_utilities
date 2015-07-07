@@ -1,0 +1,40 @@
+
+- name: Make sure passlib is installed
+  pip: name=passlib state=present
+  sudo_user: root
+  when: use_ubuntu_password == "no"
+
+- name: Retrieve ubuntu password, if desired
+  getent: database=shadow key=ubuntu split=":"
+  register: debug_password
+  sudo_user: root
+  sudo: yes
+  when: use_ubuntu_password == "yes"
+
+- name: Ask for new user password, if desired
+  shell: 'python -c "from passlib.hash import sha512_crypt; import getpass; print sha512_crypt.encrypt(getpass.getpass())" | awk -F":" "{ print $2 }"'
+  register: user_specified_password
+  when: use_ubuntu_password == "no"
+
+- set_fact: new_user_password="{{ getent_shadow['ubuntu'][0] }}"
+  when: use_ubuntu_password == "yes"
+
+- set_fact: new_user_password="{{ user_specified_password.stdout }}"
+  when: use_ubuntu_password == "no"
+
+- name: Create new user account with desired password
+  user: name="{{ new_user }}" state=present password="{{ new_user_password }}" update_password=on_create
+  sudo: yes
+  sudo_user: root
+
+- name: Move new user home directory to persistent storage
+  user: name="{{ new_user }}" home="{{ homedir_path }}/{{ new_user }}" move_home=yes
+  sudo_user: root
+
+- name: Symlink to moved home directory
+  file: state=link src="{{ homedir_path }}/{{ new_user }}" dest=/home/{{ new_user }}
+  sudo_user: root
+
+- name: Add new user to RStudio and FUSE groups
+  user: name="{{ new_user }}" groups=fuse,rstudio_users append=yes
+  sudo_user: root

@@ -10,4 +10,6 @@ modules_home: /usr/share/modules
 ipython_location: /ipython/
 ipython_port: 9510
 
-default_new_user: researcher
+new_user: researcher
+use_ubuntu_password: "yes"
+homedir_path: /mnt/gvl/home

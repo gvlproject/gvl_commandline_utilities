@@ -6,3 +6,7 @@
 
 # possibly should be done (repeatedly) in user setup
 - include: install_ipython_notebook.yml
+
+- include: setup_new_user.yml
+  tags:
+      - setup_user

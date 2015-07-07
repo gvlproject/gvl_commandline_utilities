@@ -1,0 +1,7 @@
+location /public/{{ new_user }}/ {
+     alias /home/{{ new_user }}/public_html/;
+     expires 2h;
+     # Comment out the following line to disallow browsing of public_html directory contents
+     # while still allowing access to files
+     autoindex on;
+}

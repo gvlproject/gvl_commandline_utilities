@@ -1,0 +1,11 @@
+- name: Create public_html directory
+  file: name=/home/{{ new_user }}/public_html state=directory owner={{ new_user }} group={{ new_user }} mode=755
+  sudo_user: "{{ new_user }}"
+
+- name: Set up public_html redirect
+  template: src=public_html.locations dest="{{ nginx_sites_dir }}/public_html_{{ new_user }}.locations"
+  sudo_user: root
+
+- name: Reload NGINX
+  service: name=nginx state=reloaded
+  sudo_user: root

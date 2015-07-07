@@ -6,6 +6,6 @@
   template: src=public_html.locations dest="{{ nginx_sites_dir }}/public_html_{{ new_user }}.locations"
   sudo_user: root
 
-- name: Reload NGINX
-  service: name=nginx state=reloaded
+- name: Restart NGINX
+  service: name=nginx state=restarted
   sudo_user: root

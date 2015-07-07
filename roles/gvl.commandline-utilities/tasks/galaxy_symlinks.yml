@@ -6,4 +6,4 @@
   file: state=link src=/mnt/galaxy/galaxy-app dest=/home/{{ new_user }}/galaxy owner={{ new_user }} group={{ new_user }}
 
 - name: Copy galaxy-fuse.py to new user home directory
-  copy: src=galaxy-fuse.py dest=/home/{{ new_user }} owner={{ new_user }} group={{ new_user }}
+  copy: src=galaxy-fuse.py dest=/home/{{ new_user }}/galaxy-fuse.py owner={{ new_user }} group={{ new_user }}

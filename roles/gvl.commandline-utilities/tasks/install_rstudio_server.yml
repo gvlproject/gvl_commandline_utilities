@@ -29,7 +29,7 @@
 
 # Should perhaps preserve existing conf, but there should be none on new install
 - name: Demand that users be members of rstudio_users group
-  copy: src=rserver.conf dest=/etc/rstudio/
+  copy: src=rserver.conf dest=/etc/rstudio/rserver.conf
   sudo: yes
   sudo_user: root
 

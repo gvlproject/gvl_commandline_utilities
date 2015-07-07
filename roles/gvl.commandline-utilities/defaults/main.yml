@@ -9,6 +9,7 @@ modules_home: /usr/share/modules
 
 ipython_location: /ipython/
 ipython_port: 9510
+ipython_profile: nbserver
 
 new_user: researcher
 use_ubuntu_password: "yes"

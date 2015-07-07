@@ -1,2 +1,5 @@
 
 - include: create_user.yml
+
+- include: configure_ipython_notebook.yml
+  remote_user: "{{ new_user }}"

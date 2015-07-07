@@ -4,26 +4,29 @@
   sudo_user: root
   when: use_ubuntu_password == "no"
 
-- name: Retrieve ubuntu password, if desired
+- name: Retrieve ubuntu password
   getent: database=shadow key=ubuntu split=":"
   register: debug_password
   sudo_user: root
   sudo: yes
   when: use_ubuntu_password == "yes"
 
-- name: Ask for new user password, if desired
-  shell: 'python -c "from passlib.hash import sha512_crypt; import getpass; print sha512_crypt.encrypt(getpass.getpass())" | awk -F":" "{ print $2 }"'
-  register: user_specified_password
+# Generate both hashes for linux and for ipython
+- name: Ask for new user password
+  shell: python -c "from passlib.hash import sha512_crypt; import getpass, IPython; pwd=getpass.getpass(); print sha512_crypt.encrypt(pwd), IPython.lib.passwd(passphrase=pwd)"
+  register: user_specified_password_hashes
   when: use_ubuntu_password == "no"
 
-- set_fact: new_user_password="{{ getent_shadow['ubuntu'][0] }}"
+- name: Use ubuntu password for new user
+  set_fact: new_user_password="{{ getent_shadow['ubuntu'][0] }}"
   when: use_ubuntu_password == "yes"
 
-- set_fact: new_user_password="{{ user_specified_password.stdout }}"
+- name: Use user-specified password for new user
+  set_fact: new_user_password="{{ user_specified_password_hashes.stdout.split()[0] }}"
   when: use_ubuntu_password == "no"
 
 - name: Create new user account with desired password
-  user: name="{{ new_user }}" state=present password="{{ new_user_password }}" update_password=on_create
+  user: name="{{ new_user }}" state=present password="{{ new_user_password }}"
   sudo: yes
   sudo_user: root
 

@@ -6,3 +6,5 @@
 - include: setup_public_html.yml
 
 - include: galaxy_symlinks.yml
+
+- include: write_readme.yml

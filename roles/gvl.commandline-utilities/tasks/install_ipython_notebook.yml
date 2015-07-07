@@ -14,5 +14,6 @@
   template: src=ipython.locations dest="{{ nginx_sites_dir }}"
   sudo_user: root
 
-- name: Restart NGINX
+- name: Reload NGINX
   service: name=nginx state=reloaded
+  sudo_user: root

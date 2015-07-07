@@ -20,8 +20,9 @@
   sudo: yes
   sudo_user: root
 
-- name: Restart NGINX
+- name: Reload NGINX
   service: name=nginx state=reloaded
+  sudo_user: root
 
 - name: RStudio users - Create RStudio user group
   group: name=rstudio_users state=present

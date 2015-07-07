@@ -4,3 +4,5 @@
 - include: configure_ipython_notebook.yml
 
 - include: setup_public_html.yml
+
+- include: galaxy_symlinks.yml

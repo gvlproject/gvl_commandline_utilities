@@ -1,6 +1,8 @@
 - include: install_libraries.yml
 
 - include: create_toolshed_modules.yml
+  tags:
+      - toolshed_modules
 
 - include: install_rstudio_server.yml
 

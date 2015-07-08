@@ -99,7 +99,7 @@ class Context(LoggingMixIn, Operations):
             # A file, will be a symlink to a galaxy dataset
             d = self._dataset(kw)
             t = time.mktime(time.strptime(d['update_time'],'%Y-%m-%dT%H:%M:%S.%f'))
-            fname = esc_filename(d['file_name'])
+            fname = esc_filename(d['file_path'])
             st = dict(st_mode=(S_IFLNK | 0444), st_nlink=1,
                               st_size=len(fname), st_ctime=t, st_mtime=t,
                               st_atime=t)
@@ -115,7 +115,7 @@ class Context(LoggingMixIn, Operations):
         (typ,kw) = path_type(path)
         if typ=='data':
             d = self._dataset(kw)
-            return d['file_name']
+            return d['file_path']
         raise FuseOSError(ENOENT)
 
     def read(self, path, size, offset, fh):
@@ -171,7 +171,7 @@ class Context(LoggingMixIn, Operations):
             if len(d)>1:
                 print "Too many datasets with that name and ID"
             return d[0]
-        if 'file_name' not in d[0]:
+        if 'file_path' not in d[0]:
             print "Unable to find file of dataset.  Have you set : expose_dataset_path = True"
             raise FuseOSError(ENOENT)
         return d[0]

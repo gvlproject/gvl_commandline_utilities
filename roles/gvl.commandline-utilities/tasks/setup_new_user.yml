@@ -7,4 +7,6 @@
 
 - include: galaxy_symlinks.yml
 
+- include: configure_desktop.yml
+
 - include: write_readme.yml

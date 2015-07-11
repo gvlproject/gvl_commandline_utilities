@@ -2,13 +2,17 @@
   apt: update_cache=yes
   sudo_user: root
 
-- name: Make sure IPython Notebook installed
+# todo: maybe redundant with later pip-based install
+- name: Install IPython Notebook (apt)
   apt: name=ipython-notebook
   sudo_user: root
 
 - name: Make sure Python matplotlib installed
   apt: name=python-matplotlib
   sudo_user: root
+
+- name: Make sure latest IPython Notebook installed
+  pip: name="ipython[notebook]" state=latest
 
 - name: Set up IPython Notebook NGINX redirect
   template: src=ipython.locations dest="{{ nginx_sites_dir }}"

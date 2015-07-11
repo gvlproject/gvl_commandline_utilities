@@ -7,19 +7,33 @@ These scripts configure GVL instances as command-line bioinformatics platforms, 
 
 To use, launch a GVL instance ( [instructions here](https://docs.google.com/document/d/1uYKWZckyR8kZSY6viECMJsGSTaNsS2nVMj5n_YYzxGY/pub) ), ssh in as user ubuntu, and run
 
-    git clone https://github.com/claresloggett/gvl_commandline_utilities
+    git clone https://github.com/gvlproject/gvl_commandline_utilities
     cd gvl_commandline_utilities
     sh run_all.sh
 
 This version of gvl_commandline_utilities is intended to run on GVL image 4.0 or later.
-Some of the scripts are dependent on the correct config hooks being available in
-/etc/nginx/nginx.conf .
 
-The main scripts you are likely to want to run yourself are:
-* `run_all.sh` : configure your instance for command-line use and install services.
-* `setup_user.sh` : after running `run_all.sh`, can be run again to configure additional user accounts.
-* `toolshed_to_modules.py` : after running `run_all.sh`, can be run again to update module files. This is useful if tools have been added or removed using the Galaxy Toolshed.
-* `galaxy-fuse.py` : an ordinary user can run this script to set up access to their Galaxy Datasets, if they have a Galaxy account.
+You can run these scripts as an ansible playbook, which gives the most flexibility. Basic usage:
+
+    ansible-playbook playbook.yml
+
+Available playbook tags:
+  - `setup_user` : do not bother to rerun global config, just create and configure a new user account
+  - `toolshed_modules` : just rerun toolshed_to_modules.py
+
+These tags are wrapped in `setup_user.sh` and `toolshed_to_modules.sh` for
+backwards-compatibility.
+
+Available variables can be found in `roles/gvl.commandline-utilities/defaults/` .
+Notable variables are:
+  - `new_user` : the username of the account to be created or reconfigured
+  - `use_ubuntu_password` (default is `use_ubuntu_password=yes`) : use the ubuntu/CloudMan password as the new user's password. This mode will not prompt for a password. `use_ubuntu_password=no` is more secure.
+
+Several convenience scripts are provided for backwards-compatibility. These are just
+wrappers around ansible. These are:
+* `run_all.sh` : configure your instance for command-line use and install services.  
+* `setup_user.sh` : after running `run_all.sh`, can be run again to configure additional user accounts. This is a wrapper around `--tags "setup_user"`.
+* `toolshed_to_modules.sh` : after running `run_all.sh`, can be run again to update module files. This is useful if tools have been added or removed using the Galaxy Toolshed. This is a wrapper around `--tags "toolshed_modules"`.
 
 ## How to use installed features
 
@@ -123,117 +137,14 @@ tools by running
     module avail
 
 Refer to the `module` documentation for instructions on loading, viewing and unloading modules.
-If Toolshed tools have been added or removed, rerunning `toolshed_to_modules.py` as
-described below will update the environment modules.
+If Toolshed tools have been added or removed, rerunning the relevant ansible task using `toolshed_to_modules.sh` will update the environment modules.
 
 Consult http://www.genome.edu.au/ for further documentation on GVL instances.
 
-
-## Scripts reference
-
-### run_all.sh
-
-Run other scripts with correct ordering and permissions.
-
-Any utilities which need to be configured for all users will be configured.
-
-An ordinary user account called "researcher" will be created for non-admin use,
-and configured with per-user utilities.
-
-Usage:
-
-    sh run_all.sh
-
-### toolshed_to_modules.py
-
-Look for the env.sh scripts used to set up the environment for Galaxy Toolshed-installed
-tools, and use these to create module files. The resulting modules can be accessed
-using environment module commands such as `module avail` (see
-http://modules.sourceforge.net/man/module.html). Different modules should be available for
-different installed versions of the same tool.
-
-If a Toolshed-installed tool is uninstalled from Galaxy, running this script should
-clean up the module file.
-
-Usage (show help):
-
-    sudo -E python toolshed_to_modules.py -h
-
-Requires superuser permissions, and makes use of environment variables specifying module
-locations.
-
-### configure_nginx.sh
-
-Set up NGINX config file structure necessary to configure RStudio, public_html, and
-IPython Notebook.
-
-This script is intended to run on GVL image v2.19 or later. It assumes that the
-placeholder config file commandline_utilities_http.conf has been configured
-into /etc/nginx/nginx.conf .
-
-Usage:
-
-    sudo sh configure_nginx.sh
-
-Requires superuser permissions.
-
-### setup_rstudio.sh
-
-Install and configure RStudio. This will create a group called rstudio_users, which
-ordinary user accounts will be added to by `setup_user.sh`. RStudio will be available
-at `http://<your-ip-address>/rstudio/`
-
-To use run:
-
-    sudo setup_rstudio.sh
-
-Requires superuser permissions. Assumes that configure_nginx.sh has been run.
-
-### setup_user.sh
-
-Run all scripts below which apply to an individual user. This script can be run multiple
-times to create and configure multiple non-sudo user accounts.
-
-It will create the user account, add it to appropriate groups, and configure symlinks
-and services, and set passwords.
-
-Usage:
-
-    sh setup_user.sh <username>
-
-### setup_ipython_server.py
-
-Configure an ipython notebook profile to run the ipython notebook server including
-password-protection. The notebook server, when running, will be
-available at `http://<your-ip-address>/ipython/`
-
-This script does not require sudo and can be run by an individual user to configure
-IPython Notebook under their account. It should _not_ be run by the suduer account ubuntu,
-as it is dangerous to launch a notebook server from this account.
-
-Usage (as the appropriate user):
-
-    python setup_ipython_server.py
-
-This script assumes that configure_nginx.sh has been run to set up the appropriate
-port forwarding. Note that under the default config, only ONE user can run IPython
-Notebook at any one time. More advanced configurations are possible which allow multiple
-instances to be served up at different addresses or different ports.
-
-### add_public_html.sh
-
-Create a public_html directory and redirect for the specified user.
-
-Usage:
-
-    sudo sh add_public_html.sh <username>
-
-Requires superuser permissions. Assumes that `configure_nginx.sh` has been run.
-
 ### galaxy-fuse.py
 
-This script can be found in the home directory of each ordinary user, e.g. at
-`~researcher/galaxy-fuse.py`. It is *not* called as part of the setup process by `run_all.sh`.
+This script is in `roles/gvl.commandline-utilities/files/` and will be copied to the home directory of each ordinary user, e.g. to
+`~researcher/galaxy-fuse.py`. It is *not* currently called as part of the setup process.
 
 To use this, you should log in as an ordinary user (e.g. `researcher`). You will
 need your Galaxy API key, found by logging into Galaxy and selecting the menu
@@ -251,5 +162,5 @@ by the Galaxy API
 * Datasets with non-unique names will have the Dataset ID appended to disambiguate them
 * History or Dataset names containing a slash (/) are escaped to '%-'
 
-galaxy-fuse was written by Dr David Powell and began life at
+galaxy-fuse was originally written by Dr David Powell and began life at
 https://github.com/drpowell/galaxy-fuse .

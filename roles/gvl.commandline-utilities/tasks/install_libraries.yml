@@ -1,0 +1,19 @@
+- name: "Workaround for requests packaging issue: uninstall ubuntu pip"
+  apt: name=python-pip state=absent
+  sudo: yes
+  sudo_user: root
+
+- name: "Workaround for requests packaging issue: easy-install pip"
+  easy_install: name=pip
+  sudo: yes
+  sudo_user: root
+
+- name: "Make sure BioBlend is installed."
+  pip: name=bioblend
+  sudo: yes
+  sudo_user: root
+
+- name: "Make sure fusepy is installed."
+  pip: name=fusepy
+  sudo: yes
+  sudo_user: root

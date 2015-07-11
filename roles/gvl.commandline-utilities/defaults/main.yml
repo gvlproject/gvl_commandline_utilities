@@ -1,0 +1,16 @@
+
+nginx_conf_dir: /etc/nginx
+nginx_sites_dir: "{{ nginx_conf_dir }}/sites-enabled"
+
+rstudio_package_url: http://download2.rstudio.org/rstudio-server-0.98.1103-amd64.deb
+rstudio_local_tmp_package: /tmp/rstudio-server.deb
+
+modules_home: /usr/share/modules
+
+ipython_location: /ipython/
+ipython_port: 9510
+ipython_profile: nbserver
+
+new_user: researcher
+use_ubuntu_password: "yes"
+homedir_path: /mnt/gvl/home

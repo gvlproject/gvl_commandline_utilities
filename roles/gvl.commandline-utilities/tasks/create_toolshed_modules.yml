@@ -1,0 +1,3 @@
+- name: "Scrape Galaxy Toolshed paths to create environment modules."
+  script: toolshed_to_modules.py --force --modules_dir {{ modules_home }}
+  sudo_user: root

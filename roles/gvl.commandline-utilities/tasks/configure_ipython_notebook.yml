@@ -1,0 +1,26 @@
+- name: Create ipython notebook profile
+  command: ipython profile create {{ ipython_profile }}
+  sudo_user: "{{ new_user }}"
+
+- name: Get ipython directory location
+  command: python -c "import IPython; print IPython.utils.path.get_ipython_dir()"
+  register: ipython_directory
+  sudo_user: "{{ new_user }}"
+
+- name: Generate CloudMan password hash
+  shell: python -c "import yaml, IPython; f = open('/tmp/cm/userData.yaml'); pwd = yaml.load(f)['password']; f.close(); print IPython.lib.passwd(passphrase=pwd)"
+  register: get_password_hash
+  sudo_user: root
+  when: use_ubuntu_password == "yes"
+
+- name: Use ubuntu/cloudman password for IPython Notebook
+  set_fact: password_python_hash="{{ get_password_hash.stdout }}"
+  when: use_ubuntu_password == "yes"
+
+- name: Use user-specified password for IPython Notebook
+  set_fact: password_python_hash="{{ user_specified_password_hashes.stdout.split()[1] }}"
+  when: use_ubuntu_password == "no"
+
+- name: Write out the IPython Notebook profile config
+  template: src=ipython_notebook_config.py dest="{{ ipython_directory.stdout }}/profile_{{ ipython_profile }}" owner={{ new_user }} group={{ new_user }}
+  sudo_user: "{{ new_user }}"

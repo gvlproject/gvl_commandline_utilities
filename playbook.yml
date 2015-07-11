@@ -1,0 +1,32 @@
+
+# Ansible playbook to run GVL commandline utilities setup
+
+# Usage: sudo ansible-playbook playbook.yml
+
+# As well as global setup, by default this playbook will create a
+# non-sudo user called researcher to be used for non-admin tasks
+
+# Available tags:
+#  - setup_user : do not bother to rerun global config, just create and configure a
+#                 new user account
+#  - toolshed_modules : just rerun toolshed_to_modules.py
+# These tags are wrapped in setup_user.sh and toolshed_to_modules.sh for
+# backwards-compatibility
+
+# Available variables can be found in roles/gvl.commandline-utilities/defaults
+# Notable variables are:
+#  - new_user : the username of the account to be created or reconfigured
+#  - use_ubuntu_password (default yes) : use the ubuntu/CloudMan password as the new user's password.
+#                                        This mode will not prompt for a password.
+#                                        use_ubuntu_password=no is more secure.
+
+# Clare Sloggett, VLSCI, University of Melbourne
+# Authored as part of the Genomics Virtual Laboratory project
+
+
+- hosts: localhost 
+  connection: local
+  sudo: yes
+  sudo_user: root
+  roles:
+      - gvl.commandline-utilities

@@ -3,11 +3,17 @@
 # This script will create a non-sudo user called "researcher"
 # which should be used for research and non-admin tasks.
 
+# This is now just a wrapper around ansible, provided for back-compatibility.
+
+# Usage: sh run_all.sh [-s]
+
+# Silent mode (-s) is equivalent to use_ubuntu_password=yes (the playbook default)
+# Non-silent mode is equivalent to use_ubuntu_password=no and will prompt for
+# a password.
+# Non-silent mode is the default in this wrapper script for back-compatibility.
+
 # Clare Sloggett, VLSCI, University of Melbourne
 # Authored as part of the Genomics Virtual Laboratory project
-
-# Exit on any failure so we can troubleshoot
-set -e
 
 silent_mode=false
 
@@ -21,72 +27,9 @@ while getopts ":s" opt; do
 done
 shift $(($OPTIND-1))
 
-introduction="
-These scripts will configure commandline utilities on this server.
-They will:
-  - create environment modules for Galaxy Toolshed tools
-  - install and configure RStudio Server
-  - configure IPython Notebook for web access
-  - set up public_html directories
-A new non-sudo account called 'researcher' will be created to use these utilities.
-"
-
-# Introduction
-echo "$introduction"
-if [ "$silent_mode" = false ] ; then
-   echo "Press enter to continue (or Ctrl-C to abort):"
-   read _input
-fi
-
-# Create modules from Galaxy Toolshed tools
-# NB use sudo -E so that sudo keeps the MODULE environment variables
-echo "\n*** Creating environment modules for Galaxy Toolshed tools"
-sudo -E python toolshed_to_modules.py --force
-
-# Write required NGINX config structure for services below
-echo "\n*** Configuring NGINX"
-sudo sh configure_nginx.sh
-
-# Install and configure RStudio
-echo "\n*** Installing RStudio and configuring for non-sudo users"
-sudo sh setup_rstudio.sh
-
-# Install IPython Notebook, if not installed
-sudo apt-get update
-sudo apt-get -y install ipython-notebook python-matplotlib
-
-# Make sure bioblend and fuse are installed
-sudo pip install bioblend
-sudo pip install fusepy
-
-# Add the default non-sudo account 'researcher'
+# Call the master playbook
 if [ "$silent_mode" = true ] ; then
-   sh setup_user.sh -s researcher
+    sudo ansible-playbook playbook.yml
 else
-   sh setup_user.sh researcher
+    sudo ansible-playbook playbook.yml -e "use_ubuntu_password=no"
 fi
-
-
-# Print out getting-started info
-info="
-==================================================================================
-
-This instance has now been configured with a non-sudo account called researcher.
-You should use this account for non-admin tasks.
-
-To get started straight away, log out as user ubuntu and log back in as user
-researcher, and examine the README.txt file in your new home directory:
-
-  less README.txt
-
-Or, if you would like to use su right now rather than logging out, we suggest
-the following as a workaround to allow you to use screen in your new account:
-
-  su - researcher
-  script /dev/null
-  less README.txt
-
-==================================================================================
-"
-
-echo "$info"

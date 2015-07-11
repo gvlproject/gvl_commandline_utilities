@@ -1,0 +1,10 @@
+- name: Check public-facing IP address
+  shell: ifconfig | grep -A 1 eth0 | grep inet | sed -nr 's/.*?addr:([0-9\.]+).*/\1/p'
+  register: get_ip_address
+
+- name: Record IP address
+  set_fact: ip_address={{ get_ip_address.stdout }}
+
+- name: Write out README file for new user
+  template: src=README.txt dest=/home/{{ new_user }} owner="{{ new_user }}" group="{{ new_user }}"
+  sudo_user: "{{ new_user }}"

@@ -1,0 +1,12 @@
+
+- include: create_user.yml
+
+- include: configure_ipython_notebook.yml
+
+- include: setup_public_html.yml
+
+- include: galaxy_symlinks.yml
+
+- include: configure_desktop.yml
+
+- include: write_readme.yml

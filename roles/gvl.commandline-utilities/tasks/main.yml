@@ -1,0 +1,13 @@
+- include: install_libraries.yml
+
+- include: create_toolshed_modules.yml
+  tags:
+      - toolshed_modules
+
+- include: install_rstudio_server.yml
+
+- include: install_ipython_notebook.yml
+
+- include: setup_new_user.yml
+  tags:
+      - setup_user

@@ -1,0 +1,12 @@
+- name: GVL User Desktop - Create desktop folder
+  file:
+    path: "/home/{{ new_user }}/Desktop"
+    state: "directory"
+    owner: "{{ new_user }}"
+    group: "{{ new_user }}"
+    mode: "0755"
+
+- name: GVL User Desktop - Copy desktop shortcuts
+  copy: src=desktop_shortcuts/{{ item }} dest=/home/{{ new_user }}/Desktop/{{ item }} mode=0755
+  with_items:
+    - terminal.desktop

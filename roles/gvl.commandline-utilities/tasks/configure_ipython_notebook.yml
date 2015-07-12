@@ -8,7 +8,7 @@
   sudo_user: "{{ new_user }}"
 
 - name: Generate CloudMan password hash
-  shell: python -c "import yaml, IPython; f = open('/tmp/cm/userData.yaml'); pwd = yaml.load(f)['password']; f.close(); print IPython.lib.passwd(passphrase=pwd)"
+  shell: python -c "import yaml, IPython; f = open('{{ cloudman_config_file }}'); pwd = yaml.load(f)['password']; f.close(); print IPython.lib.passwd(passphrase=pwd)"
   register: get_password_hash
   sudo_user: root
   when: use_ubuntu_password == "yes"

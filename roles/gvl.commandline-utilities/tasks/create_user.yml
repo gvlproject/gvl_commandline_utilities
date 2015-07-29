@@ -16,8 +16,8 @@
   when: use_ubuntu_password == "yes"
 
 # Generate both hashes for linux and for ipython
-- name: Ask for new user password
-  shell: python -c "from passlib.hash import sha512_crypt; import getpass, IPython; pwd=getpass.getpass(); print sha512_crypt.encrypt(pwd), IPython.lib.passwd(passphrase=pwd)"
+- name: Use password specified in an ansible variable
+  shell: python -c "from passlib.hash import sha512_crypt; import getpass, IPython; pwd='{{ specified_password }}'; print sha512_crypt.encrypt(pwd), IPython.lib.passwd(passphrase=pwd)"
   register: user_specified_password_hashes
   when: use_ubuntu_password == "no"
 

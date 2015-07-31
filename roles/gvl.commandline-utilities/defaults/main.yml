@@ -14,5 +14,6 @@ ipython_profile: nbserver
 new_user: researcher
 use_ubuntu_password: "yes"
 homedir_path: /mnt/gvl/home
+user_shell: /bin/bash
 
 cloudman_config_file: /opt/cloudman/boot/userData.yaml

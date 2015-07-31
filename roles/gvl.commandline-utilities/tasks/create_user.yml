@@ -34,7 +34,8 @@
         state=present
         password="{{ new_user_password }}"
         home="{{ homedir_path }}/{{ new_user }}"
-        move_home=yes
+        move_home=yes 
+        shell="{{ user_shell }}"
   sudo: yes
   sudo_user: root
 

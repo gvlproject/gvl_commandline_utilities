@@ -16,14 +16,14 @@
     <!-- HEADER -->
     <div id="header_wrap" class="outer">
         <header class="inner">
-          <a id="forkme_banner" href="https://github.com/claresloggett/gvl_commandline_utilities">View on GitHub</a>
+          <a id="forkme_banner" href="https://github.com/gvlproject/gvl_commandline_utilities">View on GitHub</a>
 
           <h1 id="project_title">GVL commandline utilities</h1>
           <h2 id="project_tagline">Scripts for users of GVL cloud instances. These scripts configure GVL servers as command-line bioinformatics platforms.</h2>
 
             <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/claresloggett/gvl_commandline_utilities/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/claresloggett/gvl_commandline_utilities/tarball/master">Download this project as a tar.gz file</a>
+              <a class="zip_download_link" href="https://github.com/gvlproject/gvl_commandline_utilities/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/gvlproject/gvl_commandline_utilities/tarball/master">Download this project as a tar.gz file</a>
             </section>
         </header>
     </div>
@@ -32,38 +32,65 @@
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
         <h1>
-<a name="gvl_commandline_utilities" class="anchor" href="#gvl_commandline_utilities"><span class="octicon octicon-link"></span></a>gvl_commandline_utilities</h1>
+<a id="gvl_commandline_utilities" class="anchor" href="#gvl_commandline_utilities" aria-hidden="true"><span class="octicon octicon-link"></span></a>gvl_commandline_utilities</h1>
 
 <p>Scripts useful for users of GVL cloud images (CloudMan instances).
 These scripts configure GVL instances as command-line bioinformatics platforms, including RStudio and IPython Notebook setup.</p>
 
 <h2>
-<a name="how-to-run-these-scripts" class="anchor" href="#how-to-run-these-scripts"><span class="octicon octicon-link"></span></a>How to run these scripts</h2>
+<a id="how-to-run-these-scripts" class="anchor" href="#how-to-run-these-scripts" aria-hidden="true"><span class="octicon octicon-link"></span></a>How to run these scripts</h2>
 
 <p>To use, launch a GVL instance ( <a href="https://docs.google.com/document/d/1uYKWZckyR8kZSY6viECMJsGSTaNsS2nVMj5n_YYzxGY/pub">instructions here</a> ), ssh in as user ubuntu, and run</p>
 
-<pre><code>git clone https://github.com/claresloggett/gvl_commandline_utilities
+<pre><code>git clone https://github.com/gvlproject/gvl_commandline_utilities
 cd gvl_commandline_utilities
 sh run_all.sh
 </code></pre>
 
-<p>This version of gvl_commandline_utilities is intended to run on GVL image v2.20 or later.
-Some of the scripts are dependent on the correct config hooks being available in
-/usr/nginx/conf/nginx.conf .</p>
+<p>This version of gvl_commandline_utilities is intended to run on GVL image 4.0 or later.</p>
 
-<p>The main scripts you are likely to want to run yourself are:</p>
+<p>You can run these scripts as an ansible playbook, which gives the most flexibility. Basic usage:</p>
+
+<pre><code>ansible-playbook playbook.yml
+</code></pre>
+
+<p>Available playbook tags:</p>
 
 <ul>
 <li>
-<code>run_all.sh</code> : configure your instance for command-line use and install services.</li>
+<code>setup_user</code> : do not bother to rerun global config, just create and configure a new user account</li>
 <li>
-<code>setup_user.sh</code> : after running <code>run_all.sh</code>, can be run again to configure additional user accounts.</li>
+<code>toolshed_modules</code> : just rerun toolshed_to_modules.py</li>
+</ul>
+
+<p>These tags are wrapped in <code>setup_user.sh</code> and <code>toolshed_to_modules.sh</code> for
+backwards-compatibility.</p>
+
+<p>Available variables can be found in <code>roles/gvl.commandline-utilities/defaults/</code> .
+Notable variables are:</p>
+
+<ul>
 <li>
-<code>toolshed_to_modules.py</code> : after running <code>run_all.sh</code>, can be run again to update module files. This is useful if tools have been added or removed using the Galaxy Toolshed.</li>
+<code>new_user</code> : the username of the account to be created or reconfigured</li>
 <li>
-<code>galaxy-fuse.py</code> : an ordinary user can run this script to set up access to their Galaxy Datasets, if they have a Galaxy account.</li>
-</ul><h2>
-<a name="how-to-use-installed-features" class="anchor" href="#how-to-use-installed-features"><span class="octicon octicon-link"></span></a>How to use installed features</h2>
+<code>use_ubuntu_password</code> (default is <code>use_ubuntu_password=yes</code>) : use the ubuntu/CloudMan password as the new user's password. This mode will not prompt for a password. <code>use_ubuntu_password=no</code> is more secure.</li>
+</ul>
+
+<p>Several convenience scripts are provided for backwards-compatibility. These are just
+wrappers around ansible. These are:</p>
+
+<ul>
+<li>
+<code>run_all.sh</code> : configure your instance for command-line use and install services.<br>
+</li>
+<li>
+<code>setup_user.sh</code> : after running <code>run_all.sh</code>, can be run again to configure additional user accounts. This is a wrapper around <code>--tags "setup_user"</code>.</li>
+<li>
+<code>toolshed_to_modules.sh</code> : after running <code>run_all.sh</code>, can be run again to update module files. This is useful if tools have been added or removed using the Galaxy Toolshed. This is a wrapper around <code>--tags "toolshed_modules"</code>.</li>
+</ul>
+
+<h2>
+<a id="how-to-use-installed-features" class="anchor" href="#how-to-use-installed-features" aria-hidden="true"><span class="octicon octicon-link"></span></a>How to use installed features</h2>
 
 <p>Running <code>run_all.sh</code> will create a non-sudo account called "researcher", with various services configured.
 It is more secure and convenient to use the researcher account for ordinary research activities, but
@@ -152,13 +179,10 @@ you can reconnect to it using <code>screen -r</code>.</p>
 
 <p>To access the running ipython notebook, point your browser to:</p>
 
-<pre><code>https://&lt;your-ip-address&gt;/ipython/
+<pre><code>http://&lt;your-ip-address&gt;/ipython/
 </code></pre>
 
-<p>Note the https in the URL!
-You will need the password you entered during setup.
-Your connection will be encrypted. If you use the current default setup you will
-see a browser warning due to the self-signed certificate - this is expected.</p>
+<p>You will need the password you entered during setup.</p>
 
 <p>Anyone who knows the password to your notebook server will be able to execute
 arbitrary code under your account, so keep this password private. You should treat
@@ -179,132 +203,15 @@ tools by running</p>
 </code></pre>
 
 <p>Refer to the <code>module</code> documentation for instructions on loading, viewing and unloading modules.
-If Toolshed tools have been added or removed, rerunning <code>toolshed_to_modules.py</code> as
-described below will update the environment modules.</p>
+If Toolshed tools have been added or removed, rerunning the relevant ansible task using <code>toolshed_to_modules.sh</code> will update the environment modules.</p>
 
 <p>Consult <a href="http://www.genome.edu.au/">http://www.genome.edu.au/</a> for further documentation on GVL instances.</p>
 
-<h2>
-<a name="scripts-reference" class="anchor" href="#scripts-reference"><span class="octicon octicon-link"></span></a>Scripts reference</h2>
-
 <h3>
-<a name="run_allsh" class="anchor" href="#run_allsh"><span class="octicon octicon-link"></span></a>run_all.sh</h3>
+<a id="galaxy-fusepy" class="anchor" href="#galaxy-fusepy" aria-hidden="true"><span class="octicon octicon-link"></span></a>galaxy-fuse.py</h3>
 
-<p>Run other scripts with correct ordering and permissions.</p>
-
-<p>Any utilities which need to be configured for all users will be configured.</p>
-
-<p>An ordinary user account called "researcher" will be created for non-admin use,
-and configured with per-user utilities.</p>
-
-<p>Usage:</p>
-
-<pre><code>sh run_all.sh
-</code></pre>
-
-<h3>
-<a name="toolshed_to_modulespy" class="anchor" href="#toolshed_to_modulespy"><span class="octicon octicon-link"></span></a>toolshed_to_modules.py</h3>
-
-<p>Look for the env.sh scripts used to set up the environment for Galaxy Toolshed-installed
-tools, and use these to create module files. The resulting modules can be accessed
-using environment module commands such as <code>module avail</code> (see
-<a href="http://modules.sourceforge.net/man/module.html">http://modules.sourceforge.net/man/module.html</a>). Different modules should be available for
-different installed versions of the same tool.</p>
-
-<p>If a Toolshed-installed tool is uninstalled from Galaxy, running this script should
-clean up the module file.</p>
-
-<p>Usage (show help):</p>
-
-<pre><code>sudo -E python toolshed_to_modules.py -h
-</code></pre>
-
-<p>Requires superuser permissions, and makes use of environment variables specifying module
-locations.</p>
-
-<h3>
-<a name="configure_nginxsh" class="anchor" href="#configure_nginxsh"><span class="octicon octicon-link"></span></a>configure_nginx.sh</h3>
-
-<p>Set up NGINX config file structure necessary to configure RStudio, public_html, and
-IPython Notebook.</p>
-
-<p>This script is intended to run on GVL image v2.19 or later. It assumes that the
-placeholder config files commandline_utilities_http.conf and
-commandline_utilities_https.conf have been configured into /usr/nginx/conf/nginx.conf .</p>
-
-<p>Usage:</p>
-
-<pre><code>sudo sh configure_nginx.sh
-</code></pre>
-
-<p>Requires superuser permissions.</p>
-
-<h3>
-<a name="setup_rstudiosh" class="anchor" href="#setup_rstudiosh"><span class="octicon octicon-link"></span></a>setup_rstudio.sh</h3>
-
-<p>Install and configure RStudio. This will create a group called rstudio_users, which
-ordinary user accounts will be added to by <code>setup_user.sh</code>. RStudio will be available
-at <code>http://&lt;your-ip-address&gt;/rstudio/</code></p>
-
-<p>To use run:</p>
-
-<pre><code>sudo setup_rstudio.sh
-</code></pre>
-
-<p>Requires superuser permissions. Assumes that configure_nginx.sh has been run.</p>
-
-<h3>
-<a name="setup_usersh" class="anchor" href="#setup_usersh"><span class="octicon octicon-link"></span></a>setup_user.sh</h3>
-
-<p>Run all scripts below which apply to an individual user. This script can be run multiple
-times to create and configure multiple non-sudo user accounts.</p>
-
-<p>It will create the user account, add it to appropriate groups, and configure symlinks
-and services, and set passwords.</p>
-
-<p>Usage:</p>
-
-<pre><code>sh setup_user.sh &lt;username&gt;
-</code></pre>
-
-<h3>
-<a name="setup_ipython_serverpy" class="anchor" href="#setup_ipython_serverpy"><span class="octicon octicon-link"></span></a>setup_ipython_server.py</h3>
-
-<p>Configure an ipython notebook profile to run the ipython notebook server including
-password-protection and SSL encryption. The notebook server, when running, will be
-available at <code>http://&lt;your-ip-address&gt;/ipython/</code></p>
-
-<p>This script does not require sudo and can be run by an individual user to configure
-IPython Notebook under their account. It should <em>not</em> be run by the suduer account ubuntu,
-as it is dangerous to launch a notebook server from this account.</p>
-
-<p>Usage (as the appropriate user):</p>
-
-<pre><code>python setup_ipython_server.py
-</code></pre>
-
-<p>This script assumes that configure_nginx.sh has been run to set up the appropriate
-port forwarding. Note that under the default config, only ONE user can run IPython
-Notebook at any one time. More advanced configurations are possible which allow multiple
-instances to be served up at different addresses or different ports.</p>
-
-<h3>
-<a name="add_public_htmlsh" class="anchor" href="#add_public_htmlsh"><span class="octicon octicon-link"></span></a>add_public_html.sh</h3>
-
-<p>Create a public_html directory and redirect for the specified user.</p>
-
-<p>Usage:</p>
-
-<pre><code>sudo sh add_public_html.sh &lt;username&gt;
-</code></pre>
-
-<p>Requires superuser permissions. Assumes that <code>configure_nginx.sh</code> has been run.</p>
-
-<h3>
-<a name="galaxy-fusepy" class="anchor" href="#galaxy-fusepy"><span class="octicon octicon-link"></span></a>galaxy-fuse.py</h3>
-
-<p>This script can be found in the home directory of each ordinary user, e.g. at
-<code>~researcher/galaxy-fuse.py</code>. It is <em>not</em> called as part of the setup process by <code>run_all.sh</code>.</p>
+<p>This script is in <code>roles/gvl.commandline-utilities/files/</code> and will be copied to the home directory of each ordinary user, e.g. to
+<code>~researcher/galaxy-fuse.py</code>. It is <em>not</em> currently called as part of the setup process.</p>
 
 <p>To use this, you should log in as an ordinary user (e.g. <code>researcher</code>). You will
 need your Galaxy API key, found by logging into Galaxy and selecting the menu
@@ -324,7 +231,9 @@ the directory <code>galaxy_files</code>.</p>
 by the Galaxy API</li>
 <li>Datasets with non-unique names will have the Dataset ID appended to disambiguate them</li>
 <li>History or Dataset names containing a slash (/) are escaped to '%-'</li>
-</ul><p>galaxy-fuse was written by Dr David Powell and began life at
+</ul>
+
+<p>galaxy-fuse was originally written by Dr David Powell and began life at
 <a href="https://github.com/drpowell/galaxy-fuse">https://github.com/drpowell/galaxy-fuse</a> .</p>
       </section>
     </div>
@@ -332,8 +241,8 @@ by the Galaxy API</li>
     <!-- FOOTER  -->
     <div id="footer_wrap" class="outer">
       <footer class="inner">
-        <p class="copyright">GVL commandline utilities maintained by <a href="https://github.com/claresloggett">claresloggett</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+        <p class="copyright">GVL commandline utilities maintained by <a href="https://github.com/gvlproject">gvlproject</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>
 

@@ -11,3 +11,5 @@
 - include: setup_new_user.yml
   tags:
       - setup_user
+
+- include: install_version_info.yml

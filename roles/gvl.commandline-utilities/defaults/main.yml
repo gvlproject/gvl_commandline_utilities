@@ -2,7 +2,8 @@
 nginx_conf_dir: /etc/nginx
 nginx_sites_dir: "{{ nginx_conf_dir }}/sites-enabled"
 
-rstudio_package_url: http://download2.rstudio.org/rstudio-server-0.98.1103-amd64.deb
+rstudio_version: 0.98.1103
+rstudio_package_url: "http://download2.rstudio.org/rstudio-server-{{ rstudio_version }}-amd64.deb"
 rstudio_local_tmp_package: /tmp/rstudio-server.deb
 
 modules_home: /usr/share/modules/modulefiles
@@ -16,3 +17,7 @@ homedir_path: /mnt/galaxy/home
 user_shell: /bin/bash
 
 cloudman_config_file: /opt/cloudman/boot/userData.yaml
+
+gvl_cmdlineutils_version: "4.0.0"
+gvl_cmdlineutils_build_date: "{{ ansible_date_time.iso8601 }}"
+gvl_install_path: /opt/gvl

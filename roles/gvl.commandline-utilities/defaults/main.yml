@@ -2,7 +2,7 @@
 nginx_conf_dir: /etc/nginx
 nginx_sites_dir: "{{ nginx_conf_dir }}/sites-enabled"
 
-rstudio_version: 0.98.1103
+rstudio_version: 0.99.484
 rstudio_package_url: "http://download2.rstudio.org/rstudio-server-{{ rstudio_version }}-amd64.deb"
 rstudio_local_tmp_package: /tmp/rstudio-server.deb
 

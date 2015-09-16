@@ -1,8 +1,6 @@
 
 - include: create_user.yml
 
-- include: configure_jupyterhub.yml
-
 - include: setup_public_html.yml
 
 - include: galaxy_symlinks.yml

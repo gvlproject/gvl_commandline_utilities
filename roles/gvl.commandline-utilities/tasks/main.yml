@@ -6,8 +6,10 @@
 
 - include: install_rstudio_server.yml
 
-- include: install_ipython_notebook.yml
+- include: install_jupyterhub.yml
 
 - include: setup_new_user.yml
   tags:
       - setup_user
+
+- include: install_version_info.yml

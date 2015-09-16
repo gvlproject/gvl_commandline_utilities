@@ -1,0 +1,2 @@
+- name: Copy the version info file into GVLDash
+  template: src=version_info.j2 dest={{ gvl_install_path }}/info/gvl_commandline_utilities.yml

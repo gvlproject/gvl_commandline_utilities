@@ -1,7 +1,7 @@
 # gvl_commandline_utilities
 
 Scripts useful for users of GVL cloud images (CloudMan instances).
-These scripts configure GVL instances as command-line bioinformatics platforms, including RStudio and IPython Notebook setup.
+These scripts configure GVL instances as command-line bioinformatics platforms, including RStudio and IPython Notebook (through JupyterHub) setup.
 
 ## How to run these scripts
 
@@ -31,7 +31,7 @@ Notable variables are:
 
 Several convenience scripts are provided for backwards-compatibility. These are just
 wrappers around ansible. These are:
-* `run_all.sh` : configure your instance for command-line use and install services.  
+* `run_all.sh` : configure your instance for command-line use and install services.
 * `setup_user.sh` : after running `run_all.sh`, can be run again to configure additional user accounts. This is a wrapper around `--tags "setup_user"`.
 * `toolshed_to_modules.sh` : after running `run_all.sh`, can be run again to update module files. This is useful if tools have been added or removed using the Galaxy Toolshed. This is a wrapper around `--tags "toolshed_modules"`.
 
@@ -103,28 +103,16 @@ to a URL as above, with `researcher` replaced by the relevant username.
 You can log into RStudio with username "researcher" and the corresponding linux password.
 Any other linux accounts created by running `setup_user.sh` will similarly have RStudio accounts.
 
-An **IPython Notebook** profile has been created for running a password-protected notebook
-server over the web. It does not run by default - it must be launched by a user such as researcher.
-You can launch IPython Notebook by changing to any desired working directory and running
+**JupyterHub**, a multi-user IPython notebook server, has been installed and will be available at
 
-    ipython notebook --profile=nbserver
+    http://{{ ip_address }}/jupyterhub/
 
-If you want the server to run while you are logged out, you may want
-to enter a screen session first by running `screen`. The next time you log in,
-you can reconnect to it using `screen -r`.
+You can log into JupyterHub with username "researcher" and the corresponding linux password.
+Any other linux accounts created by running `setup_user.sh` will similarly have JupyterHub accounts.
 
-To access the running ipython notebook, point your browser to:
-
-    http://<your-ip-address>/ipython/
-
-You will need the password you entered during setup.
-
-Anyone who knows the password to your notebook server will be able to execute
+Anyone who knows the password to your JupyterHub server will be able to execute
 arbitrary code under your account, so keep this password private. You should treat
 it as you would your ssh login credentials.
-
-Under the default configuration, only ONE user can run IPython Notebook at a time.
-If you have multiple users, you may want to alter your config.
 
 **Tools installed as part of CloudBioLinux** will be in the usual locations for binaries,
 and usually already in your path.

@@ -1,0 +1,52 @@
+- name: Make sure apt up to date
+  apt: update_cache=yes
+  sudo_user: root
+
+- name: "Install JupyterHub required packages"
+  apt: name={{ item }}
+  with_items:
+    - npm
+    - nodejs-legacy
+    - python3-pip
+  sudo: yes
+  sudo_user: root
+
+- name: "Install JupyterHub node packages"
+  npm: name=configurable-http-proxy global=yes
+  sudo: yes
+  sudo_user: root
+
+- name: "Install JupyterHub python packages"
+  pip: name={{ item }} executable=pip3 state=latest
+  with_items:
+    - ipython[notebook]
+    - jupyterhub
+  sudo: yes
+  sudo_user: root
+
+- name: Make sure Python matplotlib installed
+  apt: name=python-matplotlib
+  sudo_user: root
+
+- name: Set up JupyterHub NGINX redirect
+  template: src=jupyterhub.locations dest="{{ nginx_sites_dir }}"
+  sudo_user: root
+
+- name: Reload NGINX
+  service: name=nginx state=reloaded
+  sudo_user: root
+
+- name: Create JupyterHub configuration directory
+  file:
+    path: "/etc/jupyterhub"
+    state: "directory"
+    mode: "0755"
+
+- name: Write out the JupyterHub config
+  template: src=jupyterhub_config.py dest="/etc/jupyterhub/jupyterhub_config.py"
+
+- name: Configure JupyterHub to run an upstart job
+  copy: src=jupyterhub.conf dest=/etc/init/jupyterhub.conf
+
+- name: Start the JupyterHub service
+  service: name=jupyterhub state=started

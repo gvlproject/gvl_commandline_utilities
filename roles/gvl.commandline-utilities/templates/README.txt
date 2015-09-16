@@ -35,27 +35,16 @@ directory will be _publicly_ accessible at
 
 --
 
-An IPython Notebook profile has been created for running a password-protected notebook
-server over the web. You can launch this by changing to your working directory and running
+JupyterHub, a multi-user IPython notebook server, has been installed and will be available at
 
-    ipython notebook --profile={{ ipython_profile }}
+    http://{{ ip_address }}/jupyterhub/
 
-If you want the server to run while you are logged out, you may want
-to enter a screen session first by running `screen`. The next time you log in,
-you can reconnect to it using `screen -r`.
+You can log in using the same credentials as this linux account, i.e. your
+JupyterHub username is {{ new_user }}.
 
-To access the running ipython notebook, point your browser to:
-
-    http://{{ ip_address }}/ipython/
-
-You will need the password you entered during setup.
-
-Anyone who knows the password to your notebook server will be able to execute
+Anyone who knows the password to your JupyterHub server will be able to execute
 arbitrary code under your account, so keep this password private. You should treat
 it as you would your ssh login credentials.
-
-Under the default configuration, only ONE user can run IPython Notebook at a time.
-If you have multiple users, you may want to alter your config.
 
 --
 

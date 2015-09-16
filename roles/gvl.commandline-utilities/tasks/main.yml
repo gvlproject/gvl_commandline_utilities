@@ -6,7 +6,7 @@
 
 - include: install_rstudio_server.yml
 
-- include: install_jupyter_hub.yml
+- include: install_jupyterhub.yml
 
 - include: setup_new_user.yml
   tags:

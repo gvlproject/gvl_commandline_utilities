@@ -16,7 +16,7 @@
   sudo: yes
   sudo_user: root
 
-- name: "Install JupyterHub node packages"
+- name: "Install JupyterHub python packages"
   pip: name={{ item }} executable=pip3 state=latest
   with_items:
     - ipython[notebook]

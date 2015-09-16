@@ -7,9 +7,8 @@ rstudio_local_tmp_package: /tmp/rstudio-server.deb
 
 modules_home: /usr/share/modules/modulefiles
 
-ipython_location: /ipython/
-ipython_port: 9510
-ipython_profile: nbserver
+jupyterhub_location: /jupyterhub/
+jupyterhub_port: 9510
 
 new_user: researcher
 use_ubuntu_password: "yes"

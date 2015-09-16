@@ -1,7 +1,7 @@
 
 - include: create_user.yml
 
-- include: configure_ipython_notebook.yml
+- include: configure_jupyterhub.yml
 
 - include: setup_public_html.yml
 

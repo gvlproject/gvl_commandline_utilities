@@ -46,8 +46,7 @@
   template: src=jupyterhub_config.py dest="/etc/jupyterhub/jupyterhub_config.py"
 
 - name: Configure JupyterHub to run an upstart job
-  file: src=jupyterhub.conf dest=/etc/init/jupyterhub.conf
+  copy: src=jupyterhub.conf dest=/etc/init/jupyterhub.conf
 
 - name: Start the JupyterHub service
   service: name=jupyterhub state=started
-

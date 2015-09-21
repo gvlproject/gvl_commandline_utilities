@@ -8,6 +8,7 @@
     - npm
     - nodejs-legacy
     - python3-pip
+    - libfreetype6-dev # for matplotlib
   sudo: yes
   sudo_user: root
 
@@ -21,11 +22,10 @@
   with_items:
     - ipython[notebook]
     - jupyterhub
+    - matplotlib
+    - scipy
+    - pandas
   sudo: yes
-  sudo_user: root
-
-- name: Make sure Python matplotlib installed
-  apt: name=python-matplotlib
   sudo_user: root
 
 - name: Set up JupyterHub NGINX redirect

@@ -29,6 +29,8 @@ c.JupyterHub.hub_ip = '127.0.0.1'
 # put the log file in /var/log
 c.JupyterHub.extra_log_file = '/var/log/jupyterhub.log'
 
+c.JupyterHub.log_level = 'WARN'
+
 #------------------------------------------------------------------------------
 # Spawner configuration
 #------------------------------------------------------------------------------

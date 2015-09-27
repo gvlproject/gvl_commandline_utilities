@@ -17,6 +17,9 @@ c.JupyterHub.ip = '127.0.0.1'
 # The ip for the proxy API handlers
 c.JupyterHub.proxy_api_ip = '127.0.0.1'
 
+# The port for the proxy API handlers
+c.JupyterHub.proxy_api_port = 10000
+
 # The public facing port of the proxy
 c.JupyterHub.port = 9510
 
@@ -25,6 +28,9 @@ c.JupyterHub.base_url = '/jupyterhub'
 
 # The ip for this process
 c.JupyterHub.hub_ip = '127.0.0.1'
+
+# The port for this process
+c.JupyterHub.hub_port = 9581
 
 # put the log file in /var/log
 c.JupyterHub.extra_log_file = '/var/log/jupyterhub.log'

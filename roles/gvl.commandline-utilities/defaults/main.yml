@@ -8,7 +8,7 @@ rstudio_local_tmp_package: /tmp/rstudio-server.deb
 
 modules_home: /usr/share/modules/modulefiles
 
-jupyterhub_location: /jupyterhub/
+jupyterhub_location: /jupyter/
 jupyterhub_port: 9510
 
 new_user: researcher

@@ -24,7 +24,7 @@ c.JupyterHub.proxy_api_port = 10000
 c.JupyterHub.port = 9510
 
 # The base URL of the entire application
-c.JupyterHub.base_url = '/jupyterhub'
+c.JupyterHub.base_url = '/jupyter'
 
 # The ip for this process
 c.JupyterHub.hub_ip = '127.0.0.1'

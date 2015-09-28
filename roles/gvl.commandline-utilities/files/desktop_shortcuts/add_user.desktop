@@ -1,0 +1,8 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Add New User
+Comment=Add a new command-line user
+Exec=lxterminal --command "/opt/gvl/gvl_commandline_utilities/setup_user.sh"
+Icon=utilities-terminal-symbolic
+Terminal=false
+Type=Application

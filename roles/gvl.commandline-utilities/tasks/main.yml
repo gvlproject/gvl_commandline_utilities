@@ -12,4 +12,4 @@
   tags:
       - setup_user
 
-- include: install_version_info.yml
+- include: configure_gvl_settings.yml

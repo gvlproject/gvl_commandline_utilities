@@ -1,0 +1,7 @@
+- name: Copy the version info file into GVLDash
+  template: src=version_info.j2 dest={{ gvl_install_path }}/info/gvl_commandline_utilities.yml
+
+- name: Copy desktop shortcut for creating a new user
+  copy: src=desktop_shortcuts/{{ item }} dest=/home/ubuntu/Desktop/{{ item }} mode=0755
+  with_items:
+    - add_user.desktop

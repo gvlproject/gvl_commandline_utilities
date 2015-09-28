@@ -10,6 +10,13 @@ modules_home: /usr/share/modules/modulefiles
 
 jupyterhub_location: /jupyter/
 jupyterhub_port: 9510
+# jupyter dependent versions
+jupyterhub_commit: 498c062ee001d5926b601f67648f1993826852c5
+configurable_http_proxy_version: 0.4.0
+ipython_notebook_version: 4.0.0
+matplotlib_version: 1.4.3
+scipy_version: 0.16.0
+pandas_version: 0.16.2
 
 new_user: researcher
 use_ubuntu_password: "yes"

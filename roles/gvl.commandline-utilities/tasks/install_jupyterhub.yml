@@ -13,18 +13,18 @@
   sudo_user: root
 
 - name: "Install JupyterHub node packages"
-  npm: name=configurable-http-proxy global=yes
+  npm: name=configurable-http-proxy global=yes version="{{ configurable_http_proxy_version }}"
   sudo: yes
   sudo_user: root
 
 - name: "Install JupyterHub python packages"
-  pip: name={{ item }} executable=pip3 state=latest
+  pip: name={{ item.name }} executable=pip3 state=present version={{ item.version }}
   with_items:
-    - ipython[notebook]
-    - jupyterhub
-    - matplotlib
-    - scipy
-    - pandas
+    - { name: "ipython[notebook]", version: "{{ ipython_notebook_version }}" }
+    - { name: "git+git://github.com/jupyter/jupyterhub.git@{{ jupyterhub_commit }}", version: }
+    - { name: "matplotlib", version: "{{ matplotlib_version }}" }
+    - { name: "scipy", version: "{{ scipy_version }}" }
+    - { name: "pandas", version: "{{ pandas_version }}" }
   sudo: yes
   sudo_user: root
 

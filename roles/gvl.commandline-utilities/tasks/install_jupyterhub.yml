@@ -12,6 +12,11 @@
   sudo: yes
   sudo_user: root
 
+- name: "Install ipykernel, JupyterHub Python2 kernel dependency"
+  pip: name=ipykernel state=present   # note this needs to be pip not pip3
+  sudo: yes
+  sudo_user: root
+
 - name: "Install JupyterHub node packages"
   npm: name=configurable-http-proxy global=yes version="{{ configurable_http_proxy_version }}"
   sudo: yes
@@ -48,6 +53,11 @@
 
 - name: Write out the JupyterHub config
   template: src=jupyterhub_config.py dest="/etc/jupyterhub/jupyterhub_config.py"
+
+- name: Install JupyterHub Python2 kernel
+  command: python2 -m IPython kernelspec install-self
+  sudo_user: root
+  sudo: yes
 
 - name: Configure JupyterHub to run an upstart job
   copy: src=jupyterhub.conf dest=/etc/init/jupyterhub.conf

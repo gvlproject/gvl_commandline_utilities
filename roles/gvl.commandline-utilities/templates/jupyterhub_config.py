@@ -32,8 +32,8 @@ c.JupyterHub.hub_ip = '127.0.0.1'
 # The port for this process
 c.JupyterHub.hub_port = 9581
 
-# put the log file in /var/log
-c.JupyterHub.extra_log_file = '/var/log/jupyterhub.log'
+# Jupyterhub's log file is created by upstart in /var/log/upstart/jupyterhub.log
+#c.JupyterHub.extra_log_file = '/var/log/jupyterhub.log'
 
 c.JupyterHub.log_level = 'WARN'
 

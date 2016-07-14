@@ -2,7 +2,7 @@
 nginx_conf_dir: /etc/nginx
 nginx_sites_dir: "{{ nginx_conf_dir }}/sites-enabled"
 
-rstudio_version: 0.99.484
+rstudio_version: 0.99.902
 rstudio_package_url: "http://download2.rstudio.org/rstudio-server-{{ rstudio_version }}-amd64.deb"
 rstudio_local_tmp_package: /tmp/rstudio-server.deb
 
@@ -11,12 +11,12 @@ modules_home: /usr/share/modules/modulefiles
 jupyterhub_location: /jupyter/
 jupyterhub_port: 9510
 # jupyter dependent versions
-jupyterhub_commit: 498c062ee001d5926b601f67648f1993826852c5
-configurable_http_proxy_version: 0.4.0
-ipython_notebook_version: 4.0.0
-matplotlib_version: 1.4.3
-scipy_version: 0.16.0
-pandas_version: 0.16.2
+jupyterhub_version: 0.6.1
+configurable_http_proxy_version: 1.2.0
+ipython_notebook_version: 5.0.0
+matplotlib_version: 1.5.1
+scipy_version: 0.17.1
+pandas_version: 0.18.1
 
 new_user: researcher
 use_ubuntu_password: "yes"
@@ -25,6 +25,6 @@ user_shell: /bin/bash
 
 cloudman_config_file: /opt/cloudman/boot/userData.yaml
 
-gvl_cmdlineutils_version: "4.0.0"
+gvl_cmdlineutils_version: "4.1.0"
 gvl_cmdlineutils_build_date: "{{ ansible_date_time.iso8601 }}"
 gvl_install_path: /opt/gvl

@@ -1,6 +1,14 @@
 - name: Copy the version info file into GVLDash
   template: src=version_info.j2 dest={{ gvl_install_path }}/info/gvl_commandline_utilities.yml
 
+- name: Ubuntu User Desktop - Create desktop folder
+  file:
+    path: "/home/ubuntu/Desktop"
+    state: "directory"
+    owner: "ubuntu"
+    group: "ubuntu"
+    mode: "0755"
+
 - name: Copy desktop shortcut for creating a new user
   copy: src=desktop_shortcuts/{{ item }} dest=/home/ubuntu/Desktop/{{ item }} mode=0755
   with_items:

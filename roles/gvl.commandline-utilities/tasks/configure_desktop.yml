@@ -7,6 +7,6 @@
     mode: "0755"
 
 - name: GVL User Desktop - Copy desktop shortcuts
-  copy: src=desktop_shortcuts/{{ item }} dest=/home/{{ new_user }}/Desktop/{{ item }} mode=0755
+  copy: src=desktop_shortcuts/{{ item }} dest=/home/{{ new_user }}/Desktop/{{ item }} mode=0755 owner: "{{ new_user }}" group: "{{ new_user }}"
   with_items:
     - terminal.desktop

@@ -29,11 +29,7 @@
     - { name: "matplotlib", version: "{{ matplotlib_version }}" }
     - { name: "scipy", version: "{{ scipy_version }}" }
     - { name: "pandas", version: "{{ pandas_version }}" }
-  sudo: yes
-  sudo_user: root
-
-- name: "Install JupyterHub"
-  shell: pip3 install "git+git://github.com/jupyter/jupyterhub.git@{{ jupyterhub_commit }}"
+    - { name: "jupyterhub", version: "{{ jupyterhub_version }}" }
   sudo: yes
   sudo_user: root
 

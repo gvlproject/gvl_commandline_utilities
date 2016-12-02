@@ -153,7 +153,7 @@ class Context(LoggingMixIn, Operations):
         now = time.time()
         if id not in cache or now - cache[id]['time'] > CACHE_TIME:
             cache[id] = {'time':now,
-                         'contents':self.gi.histories.show_history(id,contents=True,details='all')}
+                         'contents':self.gi.histories.show_history(id,contents=True,details='all', deleted=False, visible=True)}
         return cache[id]['contents']
 
     # Find a specific dataset - the 'kw' parameter is from path_type() above

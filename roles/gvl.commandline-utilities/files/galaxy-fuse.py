@@ -14,7 +14,11 @@ appear as read-only files, organised by History, under the directory galaxy_file
 
 galaxy-fuse was written by Dr David Powell and began life at
 https://github.com/drpowell/galaxy-fuse .
+
+Modified December 2016 by Madison Flannery.
 """
+
+#TODO: MADI MADE A MESS AND SHE NEEDS TO REFACTOR THIS ONCE IT WORKS.
 
 from errno import ENOENT
 from stat import S_IFDIR, S_IFREG, S_IFLNK
@@ -42,6 +46,8 @@ def path_type(path):
         return ('datasets',dict(h_name=unesc_filename(parts[1])))
     elif len(parts)==3 and parts[0]=='histories':
         return ('data',dict(h_name=unesc_filename(parts[1]), ds_name=unesc_filename(parts[2])))
+    elif len(parts)==4 and parts[0]=='histories':
+        return ('collection',dict(h_name=unesc_filename(parts[1]), ds_name=unesc_filename(parts[2]), c_name=unesc_filename(parts[3])))
     print "Unknown : %s"%path
     return ('',0)
 
@@ -96,16 +102,33 @@ class Context(LoggingMixIn, Operations):
             st = dict(st_mode=(S_IFDIR | 0555), st_nlink=2)
             st['st_ctime'] = st['st_mtime'] = st['st_atime'] = now
         elif typ=='data':
-            # A file, will be a symlink to a galaxy dataset
+            # Two options:
+            # 1- A file, will be a symlink to a galaxy dataset
+            # 2- A collection, will be a directory.
             d = self._dataset(kw)
+
+            if d['history_content_type'] == 'dataset_collection':
+                # Simple directory
+                st = dict(st_mode=(S_IFDIR | 0555), st_nlink=2)
+                st['st_ctime'] = st['st_mtime'] = st['st_atime'] = now
+            else:
+                t = time.mktime(time.strptime(d['update_time'],'%Y-%m-%dT%H:%M:%S.%f'))
+                fname = esc_filename(d.get('file_path', d['file_name']))
+                st = dict(st_mode=(S_IFLNK | 0444), st_nlink=1,
+                                  st_size=len(fname), st_ctime=t, st_mtime=t,
+                                  st_atime=t)
+                #st = dict(st_mode=(S_IFREG | 0444), st_nlink=1,
+                #                  st_size=fname, st_ctime=t, st_mtime=t,
+                #                  st_atime=t)
+        elif typ=="collection":
+            print "COLLECTION FILE"
+            # TODO: CHANGE THIS BIT! YOU NEED TO WRITE A FUNCTION TO CALL, LIKE
+            # _DATASET IN ELIF ABOVE, THAT WILL DEAL WITH THIS.
             t = time.mktime(time.strptime(d['update_time'],'%Y-%m-%dT%H:%M:%S.%f'))
             fname = esc_filename(d.get('file_path', d['file_name']))
             st = dict(st_mode=(S_IFLNK | 0444), st_nlink=1,
                               st_size=len(fname), st_ctime=t, st_mtime=t,
                               st_atime=t)
-            #st = dict(st_mode=(S_IFREG | 0444), st_nlink=1,
-            #                  st_size=fname, st_ctime=t, st_mtime=t,
-            #                  st_atime=t)
         else:
             raise FuseOSError(ENOENT)
         return st
@@ -172,6 +195,11 @@ class Context(LoggingMixIn, Operations):
             if len(d)>1:
                 print "Too many datasets with that name and ID"
             return d[0]
+
+        # This is a collection. Deal with it upstream.
+        if d[0]['history_content_type'] == 'dataset_collection':
+            #print d
+            return d[0]
         # Some versions of the Galaxy API use file_path and some file_name
         if 'file_path' not in d[0] and 'file_name' not in d[0]:
             print "Unable to find file of dataset.  Have you set : expose_dataset_path = True"
@@ -180,6 +208,7 @@ class Context(LoggingMixIn, Operations):
 
     # read directory contents
     def readdir(self, path, fh):
+        print "readdir() - " + path
         (typ,kw) = path_type(path)
         if typ=='root':
             return ['.', '..', 'histories']
@@ -204,6 +233,23 @@ class Context(LoggingMixIn, Operations):
             h = self._history(kw['h_name'])
             ds = self._datasets(h)
             #print ds
+            # Count duplicates
+            d_count = {}
+            for d in ds:
+                try:
+                    d_count[d['name']] += 1
+                except:
+                    d_count[d['name']] = 1
+            results = ['.', '..']
+            for d in ds:
+                if d['name'] in d_count and d_count[d['name']] > 1:
+                    results.append(esc_filename(d['name'] + '-' + d['id']))
+                else:
+                    results.append(esc_filename(d['name']))
+            return results
+        elif typ=='data': # collection
+            ds = [x['object'] for x in self._dataset(kw)['elements']]
+
             # Count duplicates
             d_count = {}
             for d in ds:

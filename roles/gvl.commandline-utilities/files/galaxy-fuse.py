@@ -18,8 +18,6 @@ https://github.com/drpowell/galaxy-fuse .
 Modified December 2016 by Madison Flannery.
 """
 
-#TODO: MADI MADE A MESS AND SHE NEEDS TO REFACTOR THIS ONCE IT WORKS.
-
 from errno import ENOENT
 from stat import S_IFDIR, S_IFREG, S_IFLNK
 from sys import argv, exit

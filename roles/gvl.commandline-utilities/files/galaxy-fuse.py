@@ -85,8 +85,9 @@ class Context(LoggingMixIn, Operations):
     'Prototype FUSE to galaxy histories'
 
     def __init__(self, api_key):
-        self.gi = galaxy.GalaxyInstance(url='http://127.0.0.1:80/galaxy/', key=api_key)
+        self.gi = galaxy.GalaxyInstance(url='http://115.146.89.207/galaxy/', key=api_key)
         self.datasets_cache = {}
+        self.datasets_full_cache = {}
         self.histories_cache = {'time':None, 'contents':None}
 
     def getattr(self, path, fh=None):
@@ -121,11 +122,14 @@ class Context(LoggingMixIn, Operations):
                 #                  st_size=fname, st_ctime=t, st_mtime=t,
                 #                  st_atime=t)
         elif typ=="collection":
-            print "COLLECTION FILE"
+            #print "COLLECTION FILE"
+            #print path
             # TODO: CHANGE THIS BIT! YOU NEED TO WRITE A FUNCTION TO CALL, LIKE
             # _DATASET IN ELIF ABOVE, THAT WILL DEAL WITH THIS.
+            d = self._datasetincollection(kw)
             t = time.mktime(time.strptime(d['update_time'],'%Y-%m-%dT%H:%M:%S.%f'))
             fname = esc_filename(d.get('file_path', d['file_name']))
+            print d.get('file_path', d['file_name'])
             st = dict(st_mode=(S_IFLNK | 0444), st_nlink=1,
                               st_size=len(fname), st_ctime=t, st_mtime=t,
                               st_atime=t)
@@ -135,10 +139,17 @@ class Context(LoggingMixIn, Operations):
 
     # Return a symlink for the given dataset
     def readlink(self, path):
+        #print "HERE!!!"
+        #print path
         (typ,kw) = path_type(path)
         if typ=='data':
             d = self._dataset(kw)
             # We have already checked that one of these keys is present
+            return d.get('file_path', d['file_name'])
+        elif typ=='collection':
+            #print "HERE1"
+            d = self._datasetincollection(kw)
+            #print len(d)
             return d.get('file_path', d['file_name'])
         raise FuseOSError(ENOENT)
 
@@ -179,6 +190,16 @@ class Context(LoggingMixIn, Operations):
                          'contents':self.gi.histories.show_history(id,contents=True,details='all', deleted=False, visible=True)}
         return cache[id]['contents']
 
+    # Lookup all datasets in the specified history; cache
+    def _alldatasets(self, h):
+        id = h['id']
+        cache = self.datasets_full_cache
+        now = time.time()
+        if id not in cache or now - cache[id]['time'] > CACHE_TIME:
+            cache[id] = {'time':now,
+                         'contents':self.gi.histories.show_history(id,contents=True,details='all', deleted=False)}
+        return cache[id]['contents']
+
     # Find a specific dataset - the 'kw' parameter is from path_type() above
     def _dataset(self, kw):
         h = self._history(kw['h_name'])
@@ -198,8 +219,32 @@ class Context(LoggingMixIn, Operations):
 
         # This is a collection. Deal with it upstream.
         if d[0]['history_content_type'] == 'dataset_collection':
-            #print d
             return d[0]
+
+        # Some versions of the Galaxy API use file_path and some file_name
+        if 'file_path' not in d[0] and 'file_name' not in d[0]:
+            print "Unable to find file of dataset.  Have you set : expose_dataset_path = True"
+            raise FuseOSError(ENOENT)
+        return d[0]
+
+    # Find a specific dataset - the 'kw' parameter is from path_type() above
+    #TODO: improve this - you KNOW the dataset name AND the ID.
+    def _datasetincollection(self, kw):
+        h = self._history(kw['h_name'])
+        ds = self._alldatasets(h)
+        (d_name, d_id) = parse_name_with_id(kw['c_name'])
+        d = filter(lambda x: x['name']==d_name, ds)
+
+        if len(d)==0:
+            raise FuseOSError(ENOENT)
+        if len(d)>1:
+            d = filter(lambda x: x['name']==d_name and x['id'] == d_id, ds)
+            if len(d)==0:
+                raise FuseOSError(ENOENT)
+            if len(d)>1:
+                print "Too many datasets with that name and ID"
+            return d[0]
+
         # Some versions of the Galaxy API use file_path and some file_name
         if 'file_path' not in d[0] and 'file_name' not in d[0]:
             print "Unable to find file of dataset.  Have you set : expose_dataset_path = True"

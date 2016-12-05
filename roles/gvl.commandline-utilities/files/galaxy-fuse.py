@@ -45,9 +45,13 @@ def path_type(path):
     elif len(parts)==2 and parts[0]=='histories':
         return ('datasets',dict(h_name=unesc_filename(parts[1])))
     elif len(parts)==3 and parts[0]=='histories':
-        return ('data',dict(h_name=unesc_filename(parts[1]), ds_name=unesc_filename(parts[2])))
+        # Path: histories/<history_name>/<data_name>
+        # OR histories/<history_name>/<collection_name>
+        return ('historydataorcoll',dict(h_name=unesc_filename(parts[1]), ds_name=unesc_filename(parts[2])))
     elif len(parts)==4 and parts[0]=='histories':
-        return ('collection',dict(h_name=unesc_filename(parts[1]), ds_name=unesc_filename(parts[2]), c_name=unesc_filename(parts[3])))
+        # Path: histories/<history_name>/<coll_name>/<dataset_name>
+        return ('collectiondataset',dict(h_name=unesc_filename(parts[1]), c_name=unesc_filename(parts[2]),
+                                  ds_name=unesc_filename(parts[3])))
     print "Unknown : %s"%path
     return ('',0)
 
@@ -73,7 +77,6 @@ def unesc_filename(fname):
     return re.sub(r'%(.)', unesc, fname)
 
 def parse_name_with_id(fname):
-    #1cd8e2f6b131e891
     m = re.match(r"^(?P<name>.*)-(?P<id>[0-9a-f]{16})", fname)
     if m is not None:
         return (m.group('name'), m.group('id'))
@@ -85,13 +88,12 @@ class Context(LoggingMixIn, Operations):
     'Prototype FUSE to galaxy histories'
 
     def __init__(self, api_key):
-        self.gi = galaxy.GalaxyInstance(url='http://115.146.89.207/galaxy/', key=api_key)
-        self.datasets_cache = {}
-        self.datasets_full_cache = {}
+        self.gi = galaxy.GalaxyInstance(url='http://127.0.0.1:80/galaxy/', key=api_key)
+        self.filtered_datasets_cache = {}
+        self.full_datasets_cache = {}
         self.histories_cache = {'time':None, 'contents':None}
 
     def getattr(self, path, fh=None):
-        #uid, gid, pid = fuse_get_context()
         (typ,kw) = path_type(path)
         now = time.time()
         if typ=='root' or typ=='histories':
@@ -102,34 +104,26 @@ class Context(LoggingMixIn, Operations):
             # Simple directory
             st = dict(st_mode=(S_IFDIR | 0555), st_nlink=2)
             st['st_ctime'] = st['st_mtime'] = st['st_atime'] = now
-        elif typ=='data':
-            # Two options:
-            # 1- A file, will be a symlink to a galaxy dataset
-            # 2- A collection, will be a directory.
+        elif typ=='historydataorcoll':
+            # Dataset or collection
             d = self._dataset(kw)
 
             if d['history_content_type'] == 'dataset_collection':
-                # Simple directory
+                # A collection, will be a simple directory.
                 st = dict(st_mode=(S_IFDIR | 0555), st_nlink=2)
                 st['st_ctime'] = st['st_mtime'] = st['st_atime'] = now
             else:
+                # A file, will be a symlink to a galaxy dataset.
                 t = time.mktime(time.strptime(d['update_time'],'%Y-%m-%dT%H:%M:%S.%f'))
                 fname = esc_filename(d.get('file_path', d['file_name']))
                 st = dict(st_mode=(S_IFLNK | 0444), st_nlink=1,
                                   st_size=len(fname), st_ctime=t, st_mtime=t,
                                   st_atime=t)
-                #st = dict(st_mode=(S_IFREG | 0444), st_nlink=1,
-                #                  st_size=fname, st_ctime=t, st_mtime=t,
-                #                  st_atime=t)
-        elif typ=="collection":
-            #print "COLLECTION FILE"
-            #print path
-            # TODO: CHANGE THIS BIT! YOU NEED TO WRITE A FUNCTION TO CALL, LIKE
-            # _DATASET IN ELIF ABOVE, THAT WILL DEAL WITH THIS.
-            d = self._datasetincollection(kw)
+        elif typ=='collectiondataset':
+            # A file within a collection, will be a symlink to a galaxy dataset.
+            d = self._dataset(kw, display=False)
             t = time.mktime(time.strptime(d['update_time'],'%Y-%m-%dT%H:%M:%S.%f'))
             fname = esc_filename(d.get('file_path', d['file_name']))
-            print d.get('file_path', d['file_name'])
             st = dict(st_mode=(S_IFLNK | 0444), st_nlink=1,
                               st_size=len(fname), st_ctime=t, st_mtime=t,
                               st_atime=t)
@@ -139,17 +133,18 @@ class Context(LoggingMixIn, Operations):
 
     # Return a symlink for the given dataset
     def readlink(self, path):
-        #print "HERE!!!"
-        #print path
         (typ,kw) = path_type(path)
-        if typ=='data':
+        if typ=='historydataorcoll':
+            # Dataset inside history.
             d = self._dataset(kw)
+
             # We have already checked that one of these keys is present
             return d.get('file_path', d['file_name'])
-        elif typ=='collection':
-            #print "HERE1"
-            d = self._datasetincollection(kw)
-            #print len(d)
+        elif typ=='collectiondataset':
+            # Dataset inside collection.
+            d = self._dataset(kw, display=False)
+
+            # We have already checked that one of these keys is present
             return d.get('file_path', d['file_name'])
         raise FuseOSError(ENOENT)
 
@@ -180,10 +175,11 @@ class Context(LoggingMixIn, Operations):
             return h[0]
         return h[0]
 
-    # Lookup all datasets in the specified history; cache
-    def _datasets(self, h):
+    # Lookup visible datasets in the specified history; cache
+    # This will not return deleted or hidden datasets.
+    def _filtered_datasets(self, h):
         id = h['id']
-        cache = self.datasets_cache
+        cache = self.filtered_datasets_cache
         now = time.time()
         if id not in cache or now - cache[id]['time'] > CACHE_TIME:
             cache[id] = {'time':now,
@@ -191,9 +187,10 @@ class Context(LoggingMixIn, Operations):
         return cache[id]['contents']
 
     # Lookup all datasets in the specified history; cache
-    def _alldatasets(self, h):
+    # This will return hidden datasets. Will not return deleted datasets.
+    def _all_datasets(self, h):
         id = h['id']
-        cache = self.datasets_full_cache
+        cache = self.full_datasets_cache
         now = time.time()
         if id not in cache or now - cache[id]['time'] > CACHE_TIME:
             cache[id] = {'time':now,
@@ -201,9 +198,13 @@ class Context(LoggingMixIn, Operations):
         return cache[id]['contents']
 
     # Find a specific dataset - the 'kw' parameter is from path_type() above
-    def _dataset(self, kw):
+    # Will also handle dataset collections.
+    def _dataset(self, kw, display=True):
         h = self._history(kw['h_name'])
-        ds = self._datasets(h)
+        if display:
+            ds = self._filtered_datasets(h)
+        else:
+            ds = self._all_datasets(h)
         (d_name, d_id) = parse_name_with_id(kw['ds_name'])
         d = filter(lambda x: x['name']==d_name, ds)
 
@@ -227,33 +228,8 @@ class Context(LoggingMixIn, Operations):
             raise FuseOSError(ENOENT)
         return d[0]
 
-    # Find a specific dataset - the 'kw' parameter is from path_type() above
-    #TODO: improve this - you KNOW the dataset name AND the ID.
-    def _datasetincollection(self, kw):
-        h = self._history(kw['h_name'])
-        ds = self._alldatasets(h)
-        (d_name, d_id) = parse_name_with_id(kw['c_name'])
-        d = filter(lambda x: x['name']==d_name, ds)
-
-        if len(d)==0:
-            raise FuseOSError(ENOENT)
-        if len(d)>1:
-            d = filter(lambda x: x['name']==d_name and x['id'] == d_id, ds)
-            if len(d)==0:
-                raise FuseOSError(ENOENT)
-            if len(d)>1:
-                print "Too many datasets with that name and ID"
-            return d[0]
-
-        # Some versions of the Galaxy API use file_path and some file_name
-        if 'file_path' not in d[0] and 'file_name' not in d[0]:
-            print "Unable to find file of dataset.  Have you set : expose_dataset_path = True"
-            raise FuseOSError(ENOENT)
-        return d[0]
-
     # read directory contents
     def readdir(self, path, fh):
-        print "readdir() - " + path
         (typ,kw) = path_type(path)
         if typ=='root':
             return ['.', '..', 'histories']
@@ -276,8 +252,8 @@ class Context(LoggingMixIn, Operations):
             return results
         elif typ=='datasets':
             h = self._history(kw['h_name'])
-            ds = self._datasets(h)
-            #print ds
+            ds = self._filtered_datasets(h)
+
             # Count duplicates
             d_count = {}
             for d in ds:
@@ -292,7 +268,8 @@ class Context(LoggingMixIn, Operations):
                 else:
                     results.append(esc_filename(d['name']))
             return results
-        elif typ=='data': # collection
+        elif typ=='historydataorcoll':
+            # This is a dataset collection
             ds = [x['object'] for x in self._dataset(kw)['elements']]
 
             # Count duplicates

@@ -268,11 +268,19 @@ class Context(LoggingMixIn, Operations):
             return results
         elif typ=='historydataorcoll':
             # This is a dataset collection
+
+            # Get the datasets in the collection
             ds = [x['object'] for x in self._dataset(kw)['elements']]
+
+            # Get all datasets - we need this for checking and handling duplicates
+            # Handles the situation in which duplicates in history and
+            # one (or more) of the duplicates are in collection.
+            h = self._history(kw['h_name'])
+            all_ds = self._all_datasets(h)
 
             # Count duplicates
             d_count = {}
-            for d in ds:
+            for d in all_ds:
                 try:
                     d_count[d['name']] += 1
                 except:

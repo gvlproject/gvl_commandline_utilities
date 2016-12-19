@@ -14,6 +14,8 @@ appear as read-only files, organised by History, under the directory galaxy_file
 
 galaxy-fuse was written by Dr David Powell and began life at
 https://github.com/drpowell/galaxy-fuse .
+
+Modified December 2016 by Madison Flannery.
 """
 
 from errno import ENOENT
@@ -29,7 +31,7 @@ from fuse import FUSE, FuseOSError, Operations, LoggingMixIn, fuse_get_context
 from bioblend import galaxy
 
 # number of seconds to cache history/dataset lookups
-CACHE_TIME = 3
+CACHE_TIME = 30
 
 # Split a path into hash of components
 def path_type(path):
@@ -41,7 +43,13 @@ def path_type(path):
     elif len(parts)==2 and parts[0]=='histories':
         return ('datasets',dict(h_name=unesc_filename(parts[1])))
     elif len(parts)==3 and parts[0]=='histories':
-        return ('data',dict(h_name=unesc_filename(parts[1]), ds_name=unesc_filename(parts[2])))
+        # Path: histories/<history_name>/<data_name>
+        # OR histories/<history_name>/<collection_name>
+        return ('historydataorcoll',dict(h_name=unesc_filename(parts[1]), ds_name=unesc_filename(parts[2])))
+    elif len(parts)==4 and parts[0]=='histories':
+        # Path: histories/<history_name>/<coll_name>/<dataset_name>
+        return ('collectiondataset',dict(h_name=unesc_filename(parts[1]), c_name=unesc_filename(parts[2]),
+                                  ds_name=unesc_filename(parts[3])))
     print "Unknown : %s"%path
     return ('',0)
 
@@ -67,7 +75,6 @@ def unesc_filename(fname):
     return re.sub(r'%(.)', unesc, fname)
 
 def parse_name_with_id(fname):
-    #1cd8e2f6b131e891
     m = re.match(r"^(?P<name>.*)-(?P<id>[0-9a-f]{16})", fname)
     if m is not None:
         return (m.group('name'), m.group('id'))
@@ -80,11 +87,11 @@ class Context(LoggingMixIn, Operations):
 
     def __init__(self, api_key):
         self.gi = galaxy.GalaxyInstance(url='http://127.0.0.1:80/galaxy/', key=api_key)
-        self.datasets_cache = {}
+        self.filtered_datasets_cache = {}
+        self.full_datasets_cache = {}
         self.histories_cache = {'time':None, 'contents':None}
 
     def getattr(self, path, fh=None):
-        #uid, gid, pid = fuse_get_context()
         (typ,kw) = path_type(path)
         now = time.time()
         if typ=='root' or typ=='histories':
@@ -95,17 +102,29 @@ class Context(LoggingMixIn, Operations):
             # Simple directory
             st = dict(st_mode=(S_IFDIR | 0555), st_nlink=2)
             st['st_ctime'] = st['st_mtime'] = st['st_atime'] = now
-        elif typ=='data':
-            # A file, will be a symlink to a galaxy dataset
+        elif typ=='historydataorcoll':
+            # Dataset or collection
             d = self._dataset(kw)
+
+            if d['history_content_type'] == 'dataset_collection':
+                # A collection, will be a simple directory.
+                st = dict(st_mode=(S_IFDIR | 0555), st_nlink=2)
+                st['st_ctime'] = st['st_mtime'] = st['st_atime'] = now
+            else:
+                # A file, will be a symlink to a galaxy dataset.
+                t = time.mktime(time.strptime(d['update_time'],'%Y-%m-%dT%H:%M:%S.%f'))
+                fname = esc_filename(d.get('file_path', d['file_name']))
+                st = dict(st_mode=(S_IFLNK | 0444), st_nlink=1,
+                                  st_size=len(fname), st_ctime=t, st_mtime=t,
+                                  st_atime=t)
+        elif typ=='collectiondataset':
+            # A file within a collection, will be a symlink to a galaxy dataset.
+            d = self._dataset(kw, display=False)
             t = time.mktime(time.strptime(d['update_time'],'%Y-%m-%dT%H:%M:%S.%f'))
             fname = esc_filename(d.get('file_path', d['file_name']))
             st = dict(st_mode=(S_IFLNK | 0444), st_nlink=1,
                               st_size=len(fname), st_ctime=t, st_mtime=t,
                               st_atime=t)
-            #st = dict(st_mode=(S_IFREG | 0444), st_nlink=1,
-            #                  st_size=fname, st_ctime=t, st_mtime=t,
-            #                  st_atime=t)
         else:
             raise FuseOSError(ENOENT)
         return st
@@ -113,8 +132,16 @@ class Context(LoggingMixIn, Operations):
     # Return a symlink for the given dataset
     def readlink(self, path):
         (typ,kw) = path_type(path)
-        if typ=='data':
+        if typ=='historydataorcoll':
+            # Dataset inside history.
             d = self._dataset(kw)
+
+            # We have already checked that one of these keys is present
+            return d.get('file_path', d['file_name'])
+        elif typ=='collectiondataset':
+            # Dataset inside collection.
+            d = self._dataset(kw, display=False)
+
             # We have already checked that one of these keys is present
             return d.get('file_path', d['file_name'])
         raise FuseOSError(ENOENT)
@@ -146,20 +173,36 @@ class Context(LoggingMixIn, Operations):
             return h[0]
         return h[0]
 
-    # Lookup all datasets in the specified history; cache
-    def _datasets(self, h):
+    # Lookup visible datasets in the specified history; cache
+    # This will not return deleted or hidden datasets.
+    def _filtered_datasets(self, h):
         id = h['id']
-        cache = self.datasets_cache
+        cache = self.filtered_datasets_cache
         now = time.time()
         if id not in cache or now - cache[id]['time'] > CACHE_TIME:
             cache[id] = {'time':now,
-                         'contents':self.gi.histories.show_history(id,contents=True,details='all')}
+                         'contents':self.gi.histories.show_history(id,contents=True,details='all', deleted=False, visible=True)}
+        return cache[id]['contents']
+
+    # Lookup all datasets in the specified history; cache
+    # This will return hidden datasets. Will not return deleted datasets.
+    def _all_datasets(self, h):
+        id = h['id']
+        cache = self.full_datasets_cache
+        now = time.time()
+        if id not in cache or now - cache[id]['time'] > CACHE_TIME:
+            cache[id] = {'time':now,
+                         'contents':self.gi.histories.show_history(id,contents=True,details='all', deleted=False)}
         return cache[id]['contents']
 
     # Find a specific dataset - the 'kw' parameter is from path_type() above
-    def _dataset(self, kw):
+    # Will also handle dataset collections.
+    def _dataset(self, kw, display=True):
         h = self._history(kw['h_name'])
-        ds = self._datasets(h)
+        if display:
+            ds = self._filtered_datasets(h)
+        else:
+            ds = self._all_datasets(h)
         (d_name, d_id) = parse_name_with_id(kw['ds_name'])
         d = filter(lambda x: x['name']==d_name, ds)
 
@@ -172,6 +215,11 @@ class Context(LoggingMixIn, Operations):
             if len(d)>1:
                 print "Too many datasets with that name and ID"
             return d[0]
+
+        # This is a collection. Deal with it upstream.
+        if d[0]['history_content_type'] == 'dataset_collection':
+            return d[0]
+
         # Some versions of the Galaxy API use file_path and some file_name
         if 'file_path' not in d[0] and 'file_name' not in d[0]:
             print "Unable to find file of dataset.  Have you set : expose_dataset_path = True"
@@ -202,11 +250,37 @@ class Context(LoggingMixIn, Operations):
             return results
         elif typ=='datasets':
             h = self._history(kw['h_name'])
-            ds = self._datasets(h)
-            #print ds
+            ds = self._filtered_datasets(h)
+
             # Count duplicates
             d_count = {}
             for d in ds:
+                try:
+                    d_count[d['name']] += 1
+                except:
+                    d_count[d['name']] = 1
+            results = ['.', '..']
+            for d in ds:
+                if d['name'] in d_count and d_count[d['name']] > 1:
+                    results.append(esc_filename(d['name'] + '-' + d['id']))
+                else:
+                    results.append(esc_filename(d['name']))
+            return results
+        elif typ=='historydataorcoll':
+            # This is a dataset collection
+
+            # Get the datasets in the collection
+            ds = [x['object'] for x in self._dataset(kw)['elements']]
+
+            # Get all datasets - we need this for checking and handling duplicates
+            # Handles the situation in which duplicates in history and
+            # one (or more) of the duplicates are in collection.
+            h = self._history(kw['h_name'])
+            all_ds = self._all_datasets(h)
+
+            # Count duplicates
+            d_count = {}
+            for d in all_ds:
                 try:
                     d_count[d['name']] += 1
                 except:

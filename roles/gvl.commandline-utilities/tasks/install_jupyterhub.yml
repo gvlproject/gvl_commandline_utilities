@@ -2,6 +2,9 @@
   apt: update_cache=yes
   sudo_user: root
 
+- name: "Get and install latest pip3"
+  shell: wget https://bootstrap.pypa.io/get-pip.py && python3 ./get-pip.py
+
 - name: "Install JupyterHub required packages"
   apt: name={{ item }}
   with_items:

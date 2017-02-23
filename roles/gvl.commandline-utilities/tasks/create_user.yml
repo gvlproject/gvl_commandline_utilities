@@ -4,7 +4,7 @@
   sudo_user: root
 
 - name: Make sure passlib is installed
-  pip: name=passlib state=present
+  pip: name=passlib state=present executable=/usr/local/bin/pip2
   sudo_user: root
   when: use_ubuntu_password == "no"
 

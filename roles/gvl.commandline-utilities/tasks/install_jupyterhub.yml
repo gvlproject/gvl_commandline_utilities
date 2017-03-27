@@ -59,7 +59,7 @@
   sudo: yes
 
 - name: Configure JupyterHub to run an upstart job
-  copy: src=jupyterhub.conf dest=/etc/init/jupyterhub.conf
+  copy: src=jupyterhub.service dest=/etc/systemd/system/jupyterhub.service
 
 - name: Start the JupyterHub service
   service: name=jupyterhub state=started

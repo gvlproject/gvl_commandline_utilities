@@ -43,6 +43,14 @@
   file: state=link src="{{ homedir_path }}/{{ new_user }}" dest=/home/{{ new_user }}
   sudo_user: root
 
+- name: Make sure FUSE group exists
+  group: name="fuse" state=present
+  sudo_user: root
+
+- name: Make sure fuse is in fuse User Private Group
+  user: name="fuse" groups=fuse append=yes
+  sudo_user: root
+
 - name: Add new user to RStudio and FUSE groups
   user: name="{{ new_user }}" groups=fuse,rstudio_users append=yes
   sudo_user: root

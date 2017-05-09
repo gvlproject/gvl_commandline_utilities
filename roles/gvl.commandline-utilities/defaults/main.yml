@@ -11,7 +11,7 @@ modules_home: /usr/share/modules/modulefiles
 jupyterhub_location: /jupyter/
 jupyterhub_port: 9510
 # jupyter dependent versions
-jupyterhub_version: 0.6.1
+jupyterhub_version: 0.7.2
 configurable_http_proxy_version: 1.2.0
 ipython_notebook_version: 5.0.0
 matplotlib_version: 1.5.1

@@ -1,6 +1,7 @@
 - name: Make sure apt up to date
   apt: update_cache=yes
   sudo_user: root
+  ignore_errors: yes
 
 - name: "Get and install latest pip3"
   shell: wget https://bootstrap.pypa.io/get-pip.py && python3 ./get-pip.py

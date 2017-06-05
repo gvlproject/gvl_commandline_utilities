@@ -1,4 +1,7 @@
 
+- name: Check to see if /mnt/galaxyIndices/genomes exists and if it doesn't create it.
+  file: path=/mnt/galaxyIndices/genomes status=directory mode=0755 owner=galaxy group=users
+
 - name: Create symlink to Galaxy genome indices
   file: state=link src=/mnt/galaxyIndices/genomes dest=/home/{{ new_user }}/galaxy_genomes owner={{ new_user }} group={{ new_user }}
 

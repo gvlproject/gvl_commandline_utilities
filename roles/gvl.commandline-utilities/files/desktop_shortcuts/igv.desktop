@@ -1,0 +1,8 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=IGV
+Comment=Start IGV
+Exec="/mnt/galaxy/tools/igv/IGV_2.3.93/igv.sh"
+Icon=utilities-terminal-symbolic
+Terminal=false
+Type=Application

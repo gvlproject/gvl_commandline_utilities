@@ -10,3 +10,4 @@
   copy: src=desktop_shortcuts/{{ item }} dest=/home/{{ new_user }}/Desktop/{{ item }} mode=0755 owner="{{ new_user }}" group="{{ new_user }}"
   with_items:
     - terminal.desktop
+    - igv.desktop

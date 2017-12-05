@@ -17,7 +17,7 @@
   sudo_user: root
 
 - name: "Install ipython"
-  pip: name=ipykernel state=present version=5.5.0   # note this needs to be pip not pip3
+  pip: name=ipython state=present version=5.5.0   # note this needs to be pip not pip3
   sudo: yes
   sudo_user: root
 

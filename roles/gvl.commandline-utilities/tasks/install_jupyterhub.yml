@@ -16,8 +16,13 @@
   sudo: yes
   sudo_user: root
 
+- name: "Install ipython"
+  pip: name=ipykernel state=present version=5.5.0   # note this needs to be pip not pip3
+  sudo: yes
+  sudo_user: root
+
 - name: "Install ipykernel, JupyterHub Python2 kernel dependency"
-  pip: name=ipykernel state=present   # note this needs to be pip not pip3
+  pip: name=ipykernel state=present version=4.6.1  # note this needs to be pip not pip3
   sudo: yes
   sudo_user: root
 

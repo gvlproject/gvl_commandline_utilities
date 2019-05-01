@@ -52,5 +52,5 @@
   sudo_user: root
 
 - name: Add new user to RStudio and FUSE groups
-  user: name="{{ new_user }}" groups=fuse,rstudio_users append=yes
+  user: name="{{ new_user }}" groups=fuse append=yes
   sudo_user: root

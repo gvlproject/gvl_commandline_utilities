@@ -11,12 +11,12 @@ modules_home: /usr/share/modules/modulefiles
 jupyterhub_location: /jupyter/
 jupyterhub_port: 9510
 # jupyter dependent versions
-jupyterhub_version: 0.8.1
-configurable_http_proxy_version: 3.1.0
-ipython_notebook_version: 6.2.1
-matplotlib_version: 2.1.0
-scipy_version: 1.0.0
-pandas_version: 0.21.0
+jupyterhub_version: 1.0.0
+configurable_http_proxy_version: 3.1.1
+ipython_notebook_version: 7.5.0
+matplotlib_version: 3.0.3
+scipy_version: 1.3.0
+pandas_version: 0.24.2
 
 new_user: researcher
 use_ubuntu_password: "yes"
@@ -28,3 +28,4 @@ cloudman_config_file: /opt/cloudman/boot/userData.yaml
 gvl_cmdlineutils_version: "4.3.0"
 gvl_cmdlineutils_build_date: "{{ ansible_date_time.iso8601 }}"
 gvl_install_path: /opt/gvl
+
